@@ -1,0 +1,274 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+$color_secondary: #20a714;
+
+@mixin size($w,$h) {
+    width: $w;
+    height: $h;
+}
+
+@mixin transform($transform) {
+    -webkit-transform: $transform;
+    -ms-transform: $transform;
+    transform: $transform;
+}
+
+@mixin min($b) {
+    @if unitless($b) { $b: $b + px; }
+    @media screen and (min-width: $b) { @content; }
+}
+@mixin max($b) {
+    @if unitless($b) { $b: $b + px; }
+    @media screen and (max-width: $b) { @content; }
+}
+@mixin range($min, $max) {
+    @if unitless($min) { $min: $min + px; }
+    @if unitless($max) { $max: $max + px; }
+    @media screen and (min-width: $min) and (max-width: $max) { @content; }
+}
+
+html, body { 
+    font: normal 16px/1.2 sans-serif; 
+    color: #000; 
+}
+
+h1 {}
+h2 {}
+h3 {}
+h4 { 
+    font: normal 20px/1.5 sans-serif; 
+}
+h5 {}
+h6 {}
+
+.icon-btn {
+    display: inline-block; 
+    vertical-align: middle;
+    background-color: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+    padding: 0;
+    font-size: 24px;
+    &:hover {
+        color: #28a745;
+    }
+    svg {
+        pointer-events: none; 
+    }
+}
+.wrap { 
+    width: 1100px; 
+    max-width: 100%; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+form {
+    .form-field {
+        margin-bottom: 20px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+button, input[type=submit], .btn { 
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.section-title {
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+/* ============================ */
+/* NOTES MODUKE
+/* ============================ */
+#notes-module {
+    margin: 50px 0;
+    #note-done-btn { display: none; }
+    .notes-wrapper {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .notes-form {
+        margin: 50px 0;
+    }
+    #new-form {
+        .form-field {
+            text-align: center;
+            &:first-child {
+                width: 49%;
+                float: left;
+            }
+            &:nth-of-type(2) {
+                width: 49%;
+                float: right;
+            }
+        }
+        #add-syntax {
+            height: 100px;
+        }
+        #add-description {
+            height: 150;
+        }
+        .btn { 
+            width: 200px; 
+            margin: 0 auto;
+        }
+    }
+
+    #noteList {
+        &:not(:empty) {
+            padding: 50px 0;
+        }
+        .list-item {
+            position: relative; 
+            padding: 10px 15px; 
+            border: solid 1px #eee;
+            overflow: hidden;
+            .item-top {
+                .item-header {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 20%;
+                    margin-right: 20px;
+                    .item-title {
+                        font-size: 18px;
+                        letter-spacing: 0.5px;
+                        font-weight: 300;
+                        margin-bottom: 5px;
+                        &[contenteditable=true] { 
+                            border: solid 1px #999;
+                            padding: 5px 9px;
+                            @include max(768) {
+                                margin: 15px 0 10px;
+                            }
+                        }
+                    }
+                    .item-category {
+                        color: #999;
+                        font-size: 11px;
+                        font-weight: 500;
+                        text-transform: uppercase;
+                        select {
+                            @include max(768) {
+                                margin-bottom: 10px;
+                            }
+                        }
+                    }
+                    @include max(768) {
+                        display: block;
+                        width: 100%;
+                        margin-right: 0;
+                    }
+                }
+                .item-introduction {
+                    display: inline-block; 
+                    vertical-align: middle;
+                    width: calc(80% - 74px);
+                    &[contenteditable=true] {
+                        height: 100%;
+                        min-height: 60px;
+                        border: solid 1px #999;
+                        padding: 5px 9px;
+                    }
+                    @include max(768px) {
+                        display: block;
+                        width: 100%;
+                        margin-left: 0;
+                    }
+                }
+            }
+            .item-bottom {
+                display: none;
+            }
+            .item-btns {
+                display: none;
+                position: absolute; 
+                top: 0;
+                right: 0;
+                width: 50px;
+                height: 100%;
+                //background-color: #f8f9fa;
+                background-color: rgba(0,0,0,0.7);
+                text-align: center;
+                font-size: 0;
+                &::before {
+                    content: '';
+                    display: inline-block;
+                    width: 0;
+                    height: 100%;
+                    vertical-align: middle;
+                }
+                .item-btn {
+                    font-size: 20px;
+                    display: inline-block; 
+                    vertical-align: middle;
+                    background-color: transparent;
+                    border: 0;
+                    color: #fff;
+                    cursor: pointer;
+                    &:hover {
+                        color: #ff2f2f;
+                    }
+                    svg { pointer-events: none; }
+                }
+                &:hover {
+
+                }
+                &.active {
+                    right: 0;
+                }
+                @include max(768) {
+                    position: relative;
+                    width: 100%;
+                    padding: 5px 0;
+                    margin: 10px 0 20px;
+                }
+            }
+        }
+    }
+}
