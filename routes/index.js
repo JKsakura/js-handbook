@@ -5,5 +5,7 @@ module.exports = function(app) {
     app.get('/', ctrl.getHome);
 
     // post
+    app.post('/getNotes', ctrl.getNotes);
     app.post('/saveNote', ctrl.saveNote);
-}
+    app.post('/deleteNote', ctrl.deleteNote);
+};

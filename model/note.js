@@ -5,7 +5,10 @@ const ObjId = mongoose.Schema.ObjId;
 let note = new Schema({
     id: {type: String, trim: true},
     title: {type: String, trim: true},
-    cat: {type: String, trim: true}
+    category: {type: String, trim: true},
+    introduction: {type: String, trim: true},
+    syntax: {type: String, trim: true},
+    description: {type: String, trim: true}
 }, {collection: 'Notes'});
 
 let _Note = mongoose.model('note', note);
