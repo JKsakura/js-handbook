@@ -48,12 +48,6 @@ $color_secondary: #20a714;
     height: $h;
 }
 
-@mixin transform($transform) {
-    -webkit-transform: $transform;
-    -ms-transform: $transform;
-    transform: $transform;
-}
-
 @mixin min($b) {
     @if unitless($b) { $b: $b + px; }
     @media screen and (min-width: $b) { @content; }
@@ -81,6 +75,13 @@ h4 {
 }
 h5 {}
 h6 {}
+.wrap { 
+    width: 1100px; 
+    max-width: 100%; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    box-sizing: border-box;
+}
 
 .icon-btn {
     display: inline-block; 
@@ -98,14 +99,6 @@ h6 {}
         pointer-events: none; 
     }
 }
-.wrap { 
-    width: 1100px; 
-    max-width: 100%; 
-    margin: 0 auto; 
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
 form {
     .form-field {
         margin-bottom: 20px;
@@ -124,11 +117,53 @@ button, input[type=submit], .btn {
     text-transform: uppercase;
 }
 /* ============================ */
+/* CREATE NEW NOTE FORM
+/* ============================ */
+#note-form-container {
+    display: none;
+}
+#note-form {
+    .form-field {
+        text-align: center;
+        &:first-child {
+            width: 49%;
+            float: left;
+        }
+        &:nth-of-type(2) {
+            width: 49%;
+            float: right;
+        }
+    }
+    #add-syntax {
+        height: 100px;
+    }
+    #add-description {
+        height: 150;
+    }
+    .btn { 
+        width: 200px; 
+        margin: 0 auto;
+    }
+}
+/* ============================ */
 /* NOTES MODUKE
 /* ============================ */
 #notes-module {
     margin: 50px 0;
     #note-done-btn { display: none; }
+    .notes-header {
+        .btn {
+            svg {
+                margin-right: 5px;
+            }
+            & + .btn {
+                margin-left: 5px;
+            }
+        }
+        .manage-btn {
+            display: none;
+        }
+    }
     .notes-wrapper {
         max-width: 700px;
         margin: 0 auto;
@@ -136,50 +171,29 @@ button, input[type=submit], .btn {
     .notes-form {
         margin: 50px 0;
     }
-    #new-form {
-        .form-field {
-            text-align: center;
-            &:first-child {
-                width: 49%;
-                float: left;
-            }
-            &:nth-of-type(2) {
-                width: 49%;
-                float: right;
-            }
-        }
-        #add-syntax {
-            height: 100px;
-        }
-        #add-description {
-            height: 150;
-        }
-        .btn { 
-            width: 200px; 
-            margin: 0 auto;
-        }
-    }
 
     #noteList {
         &:not(:empty) {
             padding: 50px 0;
         }
         .list-item {
-            position: relative; 
-            padding: 10px 15px; 
+            position: relative;
             border: solid 1px #eee;
             overflow: hidden;
             .item-top {
+                cursor: pointer;
                 .item-header {
                     display: inline-block;
                     vertical-align: middle;
                     width: 20%;
                     margin-right: 20px;
+                    pointer-events: none;
                     .item-title {
                         font-size: 18px;
                         letter-spacing: 0.5px;
                         font-weight: 300;
                         margin-bottom: 5px;
+                        pointer-events: none;
                         &[contenteditable=true] { 
                             border: solid 1px #999;
                             padding: 5px 9px;
@@ -193,6 +207,7 @@ button, input[type=submit], .btn {
                         font-size: 11px;
                         font-weight: 500;
                         text-transform: uppercase;
+                        pointer-events: none;
                         select {
                             @include max(768) {
                                 margin-bottom: 10px;
@@ -209,6 +224,8 @@ button, input[type=submit], .btn {
                     display: inline-block; 
                     vertical-align: middle;
                     width: calc(80% - 74px);
+                    overflow-x: auto;
+                    pointer-events: none;
                     &[contenteditable=true] {
                         height: 100%;
                         min-height: 60px;
@@ -224,18 +241,24 @@ button, input[type=submit], .btn {
             }
             .item-bottom {
                 display: none;
+                overflow-x: auto;
+                div:not(:empty) {
+                    border-top: solid 1px #eee;
+                    padding-top: 10px;
+                    margin-top: 10px;
+                }
             }
             .item-btns {
-                display: none;
                 position: absolute; 
                 top: 0;
-                right: 0;
-                width: 50px;
+                right: -100%;
+                width: 90px;
                 height: 100%;
                 //background-color: #f8f9fa;
                 background-color: rgba(0,0,0,0.7);
                 text-align: center;
                 font-size: 0;
+                transition: right 0.15s;
                 &::before {
                     content: '';
                     display: inline-block;
@@ -244,29 +267,33 @@ button, input[type=submit], .btn {
                     vertical-align: middle;
                 }
                 .item-btn {
-                    font-size: 20px;
+                    width: 25px;
                     display: inline-block; 
                     vertical-align: middle;
+                    padding: 0;
                     background-color: transparent;
                     border: 0;
-                    color: #fff;
                     cursor: pointer;
-                    &:hover {
-                        color: #ff2f2f;
-                    }
+                    color: #fff;
+                    font-size: 20px;
+                    text-align: center;
                     svg { pointer-events: none; }
-                }
-                &:hover {
-
+                    & + .item-btn {
+                        margin-left: 15px;
+                    }
+                    &.edit-btn {
+                        &:hover {
+                            color: #1983ff;
+                        }
+                    }
+                    &.delete-btn {
+                        &:hover {
+                            color: #ff2f2f;
+                        }
+                    }
                 }
                 &.active {
                     right: 0;
-                }
-                @include max(768) {
-                    position: relative;
-                    width: 100%;
-                    padding: 5px 0;
-                    margin: 10px 0 20px;
                 }
             }
         }

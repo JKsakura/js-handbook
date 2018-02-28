@@ -7,6 +7,7 @@ html(lang="en-US")
         link(rel="stylesheet" type="text/css" href="../css/bootstrap.min.css")
         link(rel="stylesheet" type="text/css" href="../css/style.css")
         script(type="text/javascript" src="../js/jquery.js")
+        script(type="text/javascript" src="../js/ckeditor/ckeditor.js")
     body
         // START SITE
         .site
@@ -19,39 +20,42 @@ html(lang="en-US")
                     .wrap
                         .notes-wrapper
                             .notes-header
-                                button.edit-btn.icon-btn#note-edit-btn(
-                                    data-target-field="noteList")
-                                    i.far.fa-edit
-                                button.btn.btn-success#note-done-btn Done
+                                button.add-btn.btn.btn-primary#note-add-btn
+                                    i.fas.fa-plus-circle
+                                    span Add Note
+                                button.manage-btn.btn.btn-primary#note-manage-btn 
+                                    i.fas.fa-edit
+                                    span Manage
+                                button.done-btn.btn.btn-success#note-done-btn 
+                                    span Done
                             .notes-body
                                 ul#noteList
-                            .new-form-container.notes-form
-                            .section-title
-                                h4 Add a New Note
-                            form#new-form.new-form
-                                .form-field
-                                    input.form-control#add-title(
-                                        type="text" 
-                                        placeholder="Title" 
-                                        required)
-                                .form-field
-                                    .select-menu
-                                        select#add-category.form-control(required)
-                                            option(value="Category") Category
-                                            option(value="JavaScript") JavaScript
-                                            option(value="jQuery") jQuery
-                                .form-field
-                                    textarea.form-control#add-introduction(name="introduction" placeholder="Introduction")
-                                .form-field
-                                    textarea.form-control.syntax-editor#add-syntax(name="syntax" placeholder="Syntax")
-                                .form-field
-                                    textarea.form-control.description-editor#add-description(name="description" placeholder="Description")
-                                .form-field
-                                    button.btn.btn-success(type="submit" value="Add New") Add New
+                            .new-form-container.notes-form#note-form-container
+                                .section-title
+                                    h4 Add a New Note
+                                form#note-form.new-form
+                                    .form-field
+                                        input.form-control#add-title(
+                                            type="text" 
+                                            placeholder="Title" 
+                                            required)
+                                    .form-field
+                                        span.select-menu
+                                            select#add-category.form-control(required)
+                                                option(value="Category") Category
+                                                option(value="JavaScript") JavaScript
+                                                option(value="jQuery") jQuery
+                                    .form-field
+                                        textarea.form-control#add-introduction(name="introduction" placeholder="Introduction")
+                                    .form-field
+                                        textarea.form-control.syntax-editor#add-syntax(name="syntax" placeholder="Syntax")
+                                    .form-field
+                                        textarea.form-control.description-editor#add-description(name="description" placeholder="Description")
+                                    .form-field
+                                        button.btn.btn-success#form-submit(type="submit" value="Add New") Add Note
             // START FOOTER
             footer
     script(defer src="../js/fontawesome-all.min.js")
     script.
         var notes = !{JSON.stringify(notes)}
-        console.log(notes);
     script(src="../js/script.js")
