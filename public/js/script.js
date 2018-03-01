@@ -22,7 +22,12 @@ formEl = $("#note-form");
 noteList = $("#noteList");
 doneBtn = $("#note-done-btn");
 formSubmitBtn = $("#form-submit");
-noteID = notes.length-1;
+// Auto Increment ID with General Order
+noteID = notes.length>0 ? notes.length : 0;
+// Auto Increment ID with Random Order
+//noteID = notes.length>0 ? notes.currentID : 0;
+//notes.currentID = noteID+1;
+notes = notes.length>0 ? notes : [];
 
 /* ============================================================== */
 /*    DECLARE A NEW NOTE OBJECT */
@@ -287,7 +292,6 @@ function initialForm(e) {
             // Update The Current Note
             editNote(id, title, category, introduction, syntax, description);
         });
-        
     } else if( $(target).hasClass("add-btn") ) {
         title = $(formTitle).val('');
         category = $(formCategory).val('Category');
