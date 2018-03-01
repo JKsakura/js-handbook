@@ -7,27 +7,37 @@
 //    var notes = request.response;
 //    console.table(notes);
 //}
-// Declare Global CKEditor WYSIWYG Fields
-var syntaxEditor = CKEDITOR.replace('add-syntax');
-var descriptionEditor = CKEDITOR.replace('add-description');
+jQuery(function($){
+    // Declare Global CKEditor WYSIWYG Fields
+    var syntaxEditor = CKEDITOR.replace('add-syntax');
+    var descriptionEditor = CKEDITOR.replace('add-description');
 
-// Declare Global Note Vars
-var noteEditBtn, noteDoneBtn, formEl, noteList, notes, noteID, addBtn, manageBtn, doneBtn, noteForm, notes, noteID;
-noteForm = $("#note-form-container");
-editBtn = $("#note-edit-btn");
-doneBtn = $("#note-done-btn");
-addBtn = $("#note-add-btn");
-manageBtn = $("#note-manage-btn");
-formEl = $("#note-form");
-noteList = $("#noteList");
-doneBtn = $("#note-done-btn");
-formSubmitBtn = $("#form-submit");
-// Auto Increment ID with General Order
-noteID = notes.length>0 ? notes.length : 0;
-// Auto Increment ID with Random Order
-//noteID = notes.length>0 ? notes.currentID : 0;
-//notes.currentID = noteID+1;
-notes = notes.length>0 ? notes : [];
+    // Declare Global Note Vars
+    var noteEditBtn, noteDoneBtn, formEl, noteList, notes, noteID, addBtn, manageBtn, doneBtn, noteForm, notes, noteID;
+    noteForm = $("#note-form-container");
+    editBtn = $("#note-edit-btn");
+    doneBtn = $("#note-done-btn");
+    addBtn = $("#note-add-btn");
+    manageBtn = $("#note-manage-btn");
+    formEl = $("#note-form");
+    noteList = $("#noteList");
+    doneBtn = $("#note-done-btn");
+    formSubmitBtn = $("#form-submit");
+    // Auto Increment ID with General Order
+    noteID = notes.length>0 ? notes.length : 0;
+    // Auto Increment ID with Random Order
+    //noteID = notes.length>0 ? notes.currentID : 0;
+    //notes.currentID = noteID+1;
+    notes = notes.length>0 ? notes : [];
+    
+    noteHeader();
+    noteBody();
+    console.log(notes);
+    for(var i=0; i<notes.length; i++) {
+        displayNote(notes[i]);
+    }
+});
+
 
 /* ============================================================== */
 /*    DECLARE A NEW NOTE OBJECT */
@@ -40,15 +50,6 @@ function note(id, title, category, introduction, syntax, description) {
     this.syntax = syntax;
     this.description = description;
 }
-
-jQuery(function($){
-    noteHeader();
-    noteBody();
-    console.log(notes);
-    for(var i=0; i<notes.length; i++) {
-        displayNote(notes[i]);
-    }
-});
 
 /* ============================================================== */
 /*    EVENT FOR ALL NOTE HEADING BUTTONS */
