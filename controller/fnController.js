@@ -83,7 +83,7 @@ function saveNoteFunc(req, res) {
 function deleteNoteFunc(req, res) {
     var _idNote = req._idNote;
     
-    dbNote.delete({_id: _idNote}, function(err) {
+    dbNote.findOneAndRemove({_id: _idNote}, function(err) {
         if (err) {
             return res.json(err);
         }
