@@ -328,3 +328,15 @@ function requestNote(note, cb) {
         console.log(data);
     })
 }
+
+function deleteNote(note, cb) {
+    if (!note || !note._id) {
+        return;
+    }
+    
+    $.post('/deleteNote', {
+        _idNote: note._id
+    }, function(data, status) {
+        console.log(data);
+    });
+}

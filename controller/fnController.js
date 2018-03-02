@@ -81,9 +81,16 @@ function saveNoteFunc(req, res) {
 }
 
 function deleteNoteFunc(req, res) {
-    return res.json({
-        type: "error",
-        code: 1,
-        message: "Unable to do this currently"
+    var _idNote = req._idNote;
+    
+    dbNote.delete({_id: _idNote}, function(err) {
+        if (err) {
+            return res.json(err);
+        }
+        return res.json({
+            type:'succes',
+            code: 0,
+            message: "Note has been removed!"
+        });
     });
 }
