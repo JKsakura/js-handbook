@@ -8,7 +8,8 @@ let note = new Schema({
     category: {type: String, trim: true},
     introduction: {type: String, trim: true},
     syntax: {type: String, trim: true},
-    description: {type: String, trim: true}
+    description: {type: String, trim: true},
+    dtCreated: {type: Date, default: Date.now}
 }, {collection: 'Notes'});
 
 let _Note = mongoose.model('note', note);
