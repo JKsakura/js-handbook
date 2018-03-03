@@ -147,11 +147,19 @@ function getHomeFunc(req, res, next) {
 
 function getUserNotes(params, mainCb) {
     var query = params.query || {};
+    var population = [
+        {path: "tags", model: dbTag}
+    ];
     
-    dbNote.find(query, function(err, notes) {
+    dbNote.find(query).populate(population).exec(function(err, results) {
         if (err) {
             return mainCb(err);
         }
+        var notes = results.map(obj=>obj.toObject()).forEach(function(note) {
+            if (note.tags && note.tags.length) {
+                note.tags = note.tags.map(tag=>tag.name);
+            }
+        });
         mainCb(null, notes);
     });
 }
@@ -204,7 +212,7 @@ function checkAndUpdateNoteTags(noteObj, mainCb) {
     var idTags = [];
     
     async.eachOfSeries(tags, function(tag, i, cb) {
-        dbTag.findOne({id: tag}, function(err, foundTag) {
+        dbTag.findOne({name: tag}, function(err, foundTag) {
             if (err) {
                 return cb(err);
             }
@@ -213,7 +221,7 @@ function checkAndUpdateNoteTags(noteObj, mainCb) {
                 cb(null);
             }
             else {
-                dbTag.create({id: tag}, function(error, newTag) {
+                dbTag.create({name :tag}, function(error, newTag) {
                     if (error) {
                         return cb(err);
                     }
@@ -253,7 +261,11 @@ function createNote(noteObj, mainCb) {
                 if (err) {
                     return cb(err);
                 }
-                cb(null, result);
+                var note = result.toObject();
+                if (noteObj.tags && noteObj.tags.length) {
+                    note.tags = noteObj.tags;
+                }
+                cb(null, note);
             });
         }
     ], function(err, result) {
@@ -271,7 +283,11 @@ function saveNote(noteObj, mainCb) {
         if (err) {
             return mainCb(err);
         }
-        mainCb(null, result);
+        var note = result.toObject();
+        if (noteObj.tags && noteObj.tags.length) {
+            note.tags = noteObj.tags;
+        }
+        mainCb(null, note);
     });
 }
 
