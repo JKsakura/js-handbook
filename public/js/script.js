@@ -8,10 +8,10 @@
 //    console.table(notes);
 //}
 
+// Declare Global Note Vars
+var noteEditBtn, noteDoneBtn, formEl, noteList, notes, noteID, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor;
+
 jQuery(function($){
-    // Declare Global Note Vars
-    var noteEditBtn, noteDoneBtn, formEl, noteList, notes, noteID, addBtn, manageBtn, doneBtn, noteForm, notes, noteID, syntaxEditor, descriptionEditor;
-    
     // Declare Global CKEditor WYSIWYG Fields
     syntaxEditor = CKEDITOR.replace('add-syntax');
     descriptionEditor = CKEDITOR.replace('add-description');
