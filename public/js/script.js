@@ -12,6 +12,7 @@
 var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor;
 
 jQuery(function($){
+    console.table(notes);
     // Declare Global CKEditor WYSIWYG Fields
     syntaxEditor = CKEDITOR.replace('add-syntax');
     descriptionEditor = CKEDITOR.replace('add-description');
@@ -30,10 +31,10 @@ jQuery(function($){
     noteBody();
     
     for(var i=0; i<notes.length; i++) {
-        displayNote(notes[i]);
+        //displayNote(notes);
+        console.table(notes);
     }
     
-    console.table(notes);
     /* ============================================================== */
     /*    DECLARE A NEW NOTE OBJECT */
     /* ============================================================== */
@@ -157,11 +158,10 @@ jQuery(function($){
     /* ============================================================== */
     function addNote(title, category, introduction, syntax, description) {
         var newNote = new note(title, category, introduction, syntax, description);
-        //notes[noteID] = newNote;
-        //console.table(notes);
         
         requestNote(newNote, function(noteObj) {
-            displayNote(noteObj);
+            //displayNote(noteObj);
+            console.log(notes);
         });
 
         //displayNote(newNote);
@@ -279,7 +279,8 @@ jQuery(function($){
             syntax =formSyntax.setData(targetNote.syntax);
             description = formDescription.setData(targetNote.description);
             formSubmitBtn.text("Update Note");
-            $(formEl).unbind("submit").on("submit", function(e) {
+            $(formEl).unbind("submit").on("submit", function(event) {
+                event.preventDefault();
                 title = $(formTitle).val();
                 category = $(formCategory).val();
                 introduction = $(formIntroduction).val();
@@ -288,7 +289,6 @@ jQuery(function($){
 
                 // Update The Current Note
                 editNote(title, category, introduction, syntax, description);
-                e.preventDefault();
             });
         } else if( $(target).hasClass("add-btn") ) {
             title = $(formTitle).val('');
@@ -297,8 +297,8 @@ jQuery(function($){
             syntax = formSyntax.setData('');
             description = formDescription.setData('');
             formSubmitBtn.text("Add Note");
-            $(formEl).unbind("submit").submit(function(e) {
-                id = noteID;
+            $(formEl).unbind("submit").submit(function(event) {
+                event.preventDefault();
                 title = $(formTitle).val();
                 category = $(formCategory).val();
                 introduction = $(formIntroduction).val();
@@ -307,8 +307,6 @@ jQuery(function($){
                 
                 // ADD A NEW ITEM WITH NEW VALUES WHEN ADDING FINISHES
                 addNote(title, category, introduction, syntax, description);
-                
-                e.preventDefault();
             });
         }
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
