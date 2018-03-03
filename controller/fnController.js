@@ -292,7 +292,7 @@ function saveNote(noteObj, mainCb) {
 }
 
 function deleteNoteFunc(req, res) {
-    var _idNote = req._idNote;
+    var _idNote = req.body._idNote;
     
     dbNote.findOneAndRemove({_id: _idNote}, function(err) {
         if (err) {

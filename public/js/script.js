@@ -9,14 +9,13 @@
 //}
 
 // Declare Global Note Vars
-var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor;
+var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor, formTitle, formCategory, formIntroduction, formSyntax, formDescription, formNoteID;
 
 jQuery(function($){
-    console.table(notes);
     // Declare Global CKEditor WYSIWYG Fields
     syntaxEditor = CKEDITOR.replace('add-syntax');
     descriptionEditor = CKEDITOR.replace('add-description');
-
+    
     noteForm = $("#note-form-container");
     editBtn = $("#note-edit-btn");
     doneBtn = $("#note-done-btn");
@@ -27,70 +26,10 @@ jQuery(function($){
     doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
     
-    noteHeader();
-    noteBody();
-    
     for(var i=0; i<notes.length; i++) {
-        //displayNote(notes);
-        //console.table(notes);
+        displayNote(notes[i]);
     }
     
-    formSubmitBtn.on('click', btnSaveNoteEvent);
-    formEl.on('submit', function(e) {
-        e.preventDefault();
-        formSubmitBtn.click();
-    })
-    
-    /* ============================================================== */
-    /*    EVENT FOR ALL NOTE HEADING BUTTONS */
-    /* ============================================================== */
-    function noteHeader() {
-        $(addBtn).on("click", function(e) {
-            var target = e.target;
-            formToggle.toggleForm(300);
-            initialForm(e);
-            manageBtnToggle.hideBtn();
-            addBtnToggle.hideBtn();
-            doneBtnToggle.showBtn();
-        });
-
-        $(manageBtn).on("click", function() {
-            var itemBtn = $(".item-btns");
-            $(itemBtn).toggleClass("active");
-            formToggle.hideForm();
-            manageBtnToggle.hideBtn();
-            addBtnToggle.hideBtn();
-            doneBtnToggle.showBtn();
-        });
-
-        $(doneBtn).on("click", function() {
-            var itemBtn = $(".item-btns");
-            $(itemBtn).removeClass("active");
-            doneBtnToggle.hideBtn();
-            manageBtnToggle.toggleBtn();
-            addBtnToggle.showBtn();
-            formToggle.hideForm();
-        });
-
-        //manageBtnToggle.toggleBtn();
-    }
-
-    /* ============================================================== */
-    /* EVENT FOR ALL NOTE BODY BUTTONS */
-    /* ============================================================== */
-    function noteBody() {
-        $(noteList).on("click", function(e) {
-            var target = e.target;
-            if( $(target).hasClass("delete-btn") ) {
-                deleteNote(target);
-            } else if( $(target).hasClass("edit-btn") ) {
-                initialForm(e);
-            } else if( $(target).hasClass("item-top") ) {
-                $(target).parent().find(".item-bottom").stop().slideToggle(150);
-            }
-        });
-    }
-
     /* ============================================================== */
     /*    TOGGLE FOR NOTE FORM */
     /* ============================================================== */ 
@@ -129,10 +68,12 @@ jQuery(function($){
             $(manageBtn).hide();
         },
         toggleBtn: function() {
-            if( $(noteList).is(":empty") ) {
-                $(manageBtn).hide();
-            } else {
+            var children = $(noteList).children().length;
+            console.log(children);
+            if( $(noteList).is(":parent") ) {
                 $(manageBtn).show();
+            } else {
+                $(manageBtn).hide();
             }
         }
     }
@@ -148,24 +89,117 @@ jQuery(function($){
             $(doneBtn).hide();
         }
     }
+    
     /* ============================================================== */
-    /*    FUNCTIONS TO MANAGE THE NOTE LIST  */
+    /*    MAIN NOTE FUNCTIONS CALL */
+    /* ============================================================== */ 
+    noteHeader();
+    noteBody();
+    
+    formSubmitBtn.on('click', saveNote);
+    
+    formEl.on('submit', function(e) {
+        e.preventDefault();
+        $("html, body").animate({
+            scrollTop: 0
+        })
+        formSubmitBtn.click();
+    })
+    
     /* ============================================================== */
-    function saveNote(note) {
-        requestNote(note, function(noteObj) {
-            //displayNote(noteObj);
-            console.log(noteObj);
+    /*    EVENT FOR ALL NOTE HEADING BUTTONS */
+    /* ============================================================== */
+    function noteHeader() {
+        $(addBtn).on("click", function(e) {
+            var target = e.target;
+            formToggle.toggleForm(300);
+            setForm(e);
+            manageBtnToggle.hideBtn();
+            addBtnToggle.hideBtn();
+            doneBtnToggle.showBtn();
+            $("html, body").animate({
+                scrollTop: $(noteForm).offset().top 
+            });
+        });
+
+        $(manageBtn).on("click", function() {
+            var itemBtn = $(".item-btns");
+            $(itemBtn).toggleClass("active");
+            formToggle.hideForm();
+            manageBtnToggle.hideBtn();
+            addBtnToggle.hideBtn();
+            doneBtnToggle.showBtn();
+        });
+
+        $(doneBtn).on("click", function() {
+            var itemBtn = $(".item-btns");
+            $(itemBtn).removeClass("active");
+            doneBtnToggle.hideBtn();
+            manageBtnToggle.toggleBtn();
+            addBtnToggle.showBtn();
+            formToggle.hideForm();
+        });
+
+        manageBtnToggle.toggleBtn();
+    }
+
+    /* ============================================================== */
+    /* EVENT FOR ALL NOTE BODY BUTTONS */
+    /* ============================================================== */
+    function noteBody() {
+        $(noteList).on("click", function(e) {
+            var target = e.target;
+            if( $(target).hasClass("delete-btn") ) {
+                deleteNote(target);
+            } else if( $(target).hasClass("edit-btn") ) {
+                setForm(e);
+                $("html, body").animate({
+                    scrollTop: $(noteForm).offset().top 
+                });
+            } else if( $(target).hasClass("item-top") ) {
+                $(target).parent().find(".item-bottom").stop().slideToggle(150);
+            }
         });
     }
 
+    /* ============================================================== */
+    /*    FUNCTIONS TO MANAGE THE NOTE LIST  */
+    /* ============================================================== */
+    function saveNote(e) {
+//        var _id = '';
+//        var title = $(formTitle).val();
+//        var category = $(formCategory).val();
+//        var introduction = $(formIntroduction).val();
+//        var syntax =formSyntax.getData();
+//        var description = formDescription.getData();
+        
+
+        // Update The Current Note
+        var obj = getFormData();
+        requestNote(obj, 'save', function(noteObj) {
+            displayNote(noteObj);
+        });
+    }
+    
     // DELETE A NEW NOTE BASED ON THE ID
     function deleteNote(e) {
         var targetID = $(e).attr("id").slice(10);
         var r = confirm("Are You Sure You Want to Delete This Item?");
         if( r === true ) {
-            $("#note"+targetID).remove();
-            notes[targetID] = '';
+//            notes[targetID] = '';
             //console.table(notes);
+            
+            var index = notes.findIndex(function(element) {
+                return element.id && element.id.toString() === targetID;
+            });
+            
+            if (index > -1) {
+                var targetNote = notes[index];
+                requestNote(targetNote, 'delete', function() {
+                    // remove from view
+                    $("#note"+targetID).remove();
+                });
+            }
         } else {
             return false;
         }
@@ -173,7 +207,6 @@ jQuery(function($){
     
     // DISPLAY THE ELEMENT WITH NEW DOM STRUCTURE
     function displayNote(note) {
-        console.log(note);
         var itemId, listItem, itemTop, itemBottom, itemHeader, itemTitle, itemCategory, itemIntroduction, itemSyntax, itemDescription, itembtns, itemDelete, itemDeleteBtn;
         // Create New Element
         listItem = $("li");
@@ -238,12 +271,13 @@ jQuery(function($){
     /* FUNCTIONS TO MANAGE THE FORM */   
     /* ============================================================== */
     // TRIGGER THE SUBMIT FUNCTION WHEN FORM SUBMITS
-    function initialForm(e) {
+    function setForm(e) {
         var target = e.target;
-        var id, title, category, introduction, syntax, description, btnTxt;
+        var id, _id, title, category, introduction, syntax, description, btnTxt;
         formTitle = $("#add-title");
         formCategory = $("#add-category");
         formIntroduction = $("#add-introduction");
+        formNoteID = '';
         formSyntax = syntaxEditor.activeFilter.editor;
         formDescription = descriptionEditor.activeFilter.editor;
         
@@ -251,9 +285,10 @@ jQuery(function($){
         if (id && id.trim()) {
             id = id.slice(8);
             var targetNote = notes.find(function(element) {
-                return element.id === id;
+                return element.id && element.id.toString() === id;
             });
             if (targetNote) {
+                _id = targetNote._id;
                 title = targetNote.title;
                 category = targetNote.category;
                 introduction = targetNote.introduction;
@@ -263,66 +298,36 @@ jQuery(function($){
             }
         }
         else {
+            _id = '';
             title = "";
             category = "";
             introduction = "";
             syntax = "";
             description = "";
-            btnTxt = "Update Note";
+            btnTxt = "Add Note";
         }
         
+        formNoteID = _id;
+        $(formTitle).val(title);
+        $(formCategory).val(category);
+        $(formIntroduction).val(introduction);
+        formSyntax.setData(syntax);
+        formDescription.setData(description);
         
-
-//        if( $(target).hasClass("edit-btn") ) {
-//            id = $(target).attr("id").slice(8);
-//            var targetNote = notes.find(function(element) {
-//                return element.id === id;
-//            });
-//            
-//            title = $(formTitle).val(targetNote.title);
-//            category = $(formCategory).val(targetNote.category);
-//            introduction = $(formIntroduction).val(targetNote.introduction);
-//            syntax =formSyntax.setData(targetNote.syntax);
-//            description = formDescription.setData(targetNote.description);
-//            formSubmitBtn.text("Update Note");
-//            
-//        } else if( $(target).hasClass("add-btn") ) {
-//            title = $(formTitle).val('');
-//            category = $(formCategory).val('Category');
-//            introduction = $(formIntroduction).val('');
-//            syntax = formSyntax.setData('');
-//            description = formDescription.setData('');
-//            formSubmitBtn.text("Add Note");
-//        }
-//        $(formEl).on("submit", function(event) {
-//            event.preventDefault();
-//            title = $(formTitle).val();
-//            category = $(formCategory).val();
-//            introduction = $(formIntroduction).val();
-//            syntax =formSyntax.getData();
-//            description = formDescription.getData();
-//
-//            // Update The Current Note
-//            saveNote(title, category, introduction, syntax, description);
-//        });
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
         formToggle.showForm();
     }
-    
-    function btnSaveNoteEvent(e) {
-        var _id = '';
+
+    function getFormData() {
+        // fetch form data
+        var _id = formNoteID;
         var title = $(formTitle).val();
         var category = $(formCategory).val();
         var introduction = $(formIntroduction).val();
         var syntax =formSyntax.getData();
         var description = formDescription.getData();
-
-        // Update The Current Note
-        var obj = setNoteObj(_id, title, category, introduction, syntax, description)
-        saveNote(obj);
-    }
-    
-    function setNoteObj(_id, title, category, introduction, syntax, description) {
+        
+        // format obj
         var resObj = {
             title: title,
             category: category,
@@ -335,26 +340,48 @@ jQuery(function($){
         }
         return resObj;
     }
-
-    function requestNote(note, cb) {
-        $.post('/saveNote', {
-            noteObj: note
-        }, function(data, status) {
-            //console.log(data);
-            cb(data.result);
-        })
-    }
-
-    function deleteNote(note, cb) {
-        if (!note || !note._id) {
+    
+    function requestNote(note, type, cb) {
+        if (type === 'save') {
+            $.post('/saveNote', {
+                noteObj: note
+            }, function(data, status) {
+                //console.log(data);
+                cb(data.result);
+            });
+        }
+        else if (type === 'delete') {
+            if (!note || !note._id) {
+                return;
+            }
+            
+            $.post('/deleteNote', {
+                _idNote: note._id
+            }, function(data, status) {
+                console.log(data);
+                if (data.code === 0) {
+                    cb();
+                }
+                else {
+                    console.log(data.message || data.text);
+                }
+            });
+        }
+        else {
             return;
         }
-
-        $.post('/deleteNote', {
-            _idNote: note._id
-        }, function(data, status) {
-            console.log(data);
-        });
     }
+
+//    function deleteNote(note, cb) {
+//        if (!note || !note._id) {
+//            return;
+//        }
+//
+//        $.post('/deleteNote', {
+//            _idNote: note._id
+//        }, function(data, status) {
+//            console.log(data);
+//        });
+//    }
 });
 
