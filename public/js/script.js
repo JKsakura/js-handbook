@@ -26,6 +26,7 @@ jQuery(function($){
     doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
     
+    //console.log(notes);
     for(var i=0; i<notes.length; i++) {
         displayNote(notes[i]);
     }
@@ -69,7 +70,6 @@ jQuery(function($){
         },
         toggleBtn: function() {
             var children = $(noteList).children().length;
-            console.log(children);
             if( $(noteList).is(":parent") ) {
                 $(manageBtn).show();
             } else {
@@ -300,7 +300,7 @@ jQuery(function($){
         else {
             _id = '';
             title = "";
-            category = "";
+            category = "Category";
             introduction = "";
             syntax = "";
             description = "";
@@ -358,7 +358,7 @@ jQuery(function($){
             $.post('/deleteNote', {
                 _idNote: note._id
             }, function(data, status) {
-                console.log(data);
+                //console.log(data);
                 if (data.code === 0) {
                     cb();
                 }
@@ -371,17 +371,5 @@ jQuery(function($){
             return;
         }
     }
-
-//    function deleteNote(note, cb) {
-//        if (!note || !note._id) {
-//            return;
-//        }
-//
-//        $.post('/deleteNote', {
-//            _idNote: note._id
-//        }, function(data, status) {
-//            console.log(data);
-//        });
-//    }
 });
 

@@ -148,14 +148,15 @@ function getHomeFunc(req, res, next) {
 function getUserNotes(params, mainCb) {
     var query = params.query || {};
     var population = [
-        {path: "tags", model: dbTag}
+        {path: "tags"}
     ];
     
     dbNote.find(query).populate(population).exec(function(err, results) {
         if (err) {
             return mainCb(err);
         }
-        var notes = results.map(obj=>obj.toObject()).forEach(function(note) {
+        var notes = results.map(obj=>obj.toObject());
+        notes.forEach(function(note) {
             if (note.tags && note.tags.length) {
                 note.tags = note.tags.map(tag=>tag.name);
             }
