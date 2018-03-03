@@ -11,7 +11,7 @@ let note = new Schema({
     description: {type: String, trim: true},
     dtCreated: {type: Date, default: Date.now},  
     // tags - for grouping
-    tags: [{type: ObjId, ref: 'tag'}]
+    tags: []
 }, {collection: 'Notes'});
 
 let _Note = mongoose.model('note', note);
