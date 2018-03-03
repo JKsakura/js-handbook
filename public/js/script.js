@@ -9,7 +9,7 @@
 //}
 
 // Declare Global Note Vars
-var noteEditBtn, noteDoneBtn, formEl, noteList, notes, noteID, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor;
+var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor;
 
 jQuery(function($){
     // Declare Global CKEditor WYSIWYG Fields
@@ -25,12 +25,6 @@ jQuery(function($){
     noteList = $("#noteList");
     doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
-    // Auto Increment ID with General Order
-    noteID = notes.length>0 ? notes.length : 0;
-    // Auto Increment ID with Random Order
-    //noteID = notes.length>0 ? notes.currentID : 0;
-    //notes.currentID = noteID+1;
-    notes = notes.length>0 ? notes : [];
     
     noteHeader();
     noteBody();
@@ -39,11 +33,11 @@ jQuery(function($){
         displayNote(notes[i]);
     }
     
+    console.table(notes);
     /* ============================================================== */
     /*    DECLARE A NEW NOTE OBJECT */
     /* ============================================================== */
-    function note(id, title, category, introduction, syntax, description) {
-        this.id = id;
+    function note(title, category, introduction, syntax, description) {
         this.title = title;
         this.category = category;
         this.introduction = introduction;
@@ -161,16 +155,16 @@ jQuery(function($){
     /* ============================================================== */
     /*    FUNCTIONS TO MANAGE THE NOTE LIST  */
     /* ============================================================== */
-    function addNote(id, title, category, introduction, syntax, description) {
-        var newNote = new note(id, title, category, introduction, syntax, description);
-        notes[noteID] = newNote;
+    function addNote(title, category, introduction, syntax, description) {
+        var newNote = new note(title, category, introduction, syntax, description);
+        //notes[noteID] = newNote;
         //console.table(notes);
-
-        requestNote(newNote, function() {
-            displayNote(newNote);
+        
+        requestNote(newNote, function(noteObj) {
+            displayNote(noteObj);
         });
 
-        displayNote(newNote);
+        //displayNote(newNote);
     }
 
     // DELETE A NEW NOTE BASED ON THE ID
@@ -266,7 +260,7 @@ jQuery(function($){
     // TRIGGER THE SUBMIT FUNCTION WHEN FORM SUBMITS
     function initialForm(e) {
         var target = e.target;
-        var id, targetID, title, category, introduction, syntax, description;
+        var id, title, category, introduction, syntax, description;
         formTitle = $("#add-title");
         formCategory = $("#add-category");
         formIntroduction = $("#add-introduction");
@@ -275,15 +269,17 @@ jQuery(function($){
 
         if( $(target).hasClass("edit-btn") ) {
             id = $(target).attr("id").slice(8);
-            targetID = $(target).attr("id");
-            title = $(formTitle).val(notes[id].title);
-            category = $(formCategory).val(notes[id].category);
-            introduction = $(formIntroduction).val(notes[id].introduction);
-            syntax =formSyntax.setData(notes[id].syntax);
-            description = formDescription.setData(notes[id].description);
+            var targetNote = notes.find(function(element) {
+                return element;
+            });
+            
+            title = $(formTitle).val(targetNote.title);
+            category = $(formCategory).val(targetNote.category);
+            introduction = $(formIntroduction).val(targetNote.introduction);
+            syntax =formSyntax.setData(targetNote.syntax);
+            description = formDescription.setData(targetNote.description);
             formSubmitBtn.text("Update Note");
             $(formEl).unbind("submit").on("submit", function(e) {
-                e.preventDefault();
                 title = $(formTitle).val();
                 category = $(formCategory).val();
                 introduction = $(formIntroduction).val();
@@ -291,7 +287,8 @@ jQuery(function($){
                 description = formDescription.getData();
 
                 // Update The Current Note
-                editNote(id, title, category, introduction, syntax, description);
+                editNote(title, category, introduction, syntax, description);
+                e.preventDefault();
             });
         } else if( $(target).hasClass("add-btn") ) {
             title = $(formTitle).val('');
@@ -301,20 +298,17 @@ jQuery(function($){
             description = formDescription.setData('');
             formSubmitBtn.text("Add Note");
             $(formEl).unbind("submit").submit(function(e) {
-                e.preventDefault();
                 id = noteID;
                 title = $(formTitle).val();
                 category = $(formCategory).val();
                 introduction = $(formIntroduction).val();
                 syntax =formSyntax.getData();
                 description = formDescription.getData();
+                
                 // ADD A NEW ITEM WITH NEW VALUES WHEN ADDING FINISHES
-
-                // Create A New Note
-                addNote(id, title, category, introduction, syntax, description);
-                // Increase Note ID
-                noteID ++;
-                //console.log('work2');
+                addNote(title, category, introduction, syntax, description);
+                
+                e.preventDefault();
             });
         }
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
@@ -325,7 +319,8 @@ jQuery(function($){
         $.post('/saveNote', {
             noteObj: note
         }, function(data, status) {
-            console.log(data);
+            //console.log(data);
+            cb(data.result);
         })
     }
 

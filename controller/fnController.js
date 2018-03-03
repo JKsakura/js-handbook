@@ -190,7 +190,12 @@ function createNote(noteObj, mainCb) {
     async.waterfall([
         // assing new ID
         function(cb) {
-            assignNewId('note', noteObj, cb);
+            assignNewId('note', noteObj, function(err, result) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null);
+            });
         }, 
         
         // create new record in DB
