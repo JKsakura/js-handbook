@@ -47,34 +47,73 @@ function invalidResult(res, msg) {
     }
 }
 function assignNewId(type, obj, mainCb) {
-    if (obj.id) {
-        delete obj.id;
-    }
-    var query = { type: type };
-    dbCounter.findOne(query, function(err, cntObj) {
-        if (err) {
-            return mainCb(err);
-        }
-        if (!cntObj) {
-            return mainCb(cbMsg('error', 'Unable to find counter'));
-        }
-        // set object id
-        var id = cntObj.curr;
-        obj.id = ++id;
+    // process
+    async.waterfall([
+        // find old counter
+        function(cb) {
+            var query = { type: type };
+            dbCounter.findOne(query, function(err, cntObj) {
+                if (err) {
+                    return cb(err);
+                }
+                if (!cntObj) {
+                    cb(null, {});
+                }
+                else {
+                    cb(null, cntObj);
+                }
+            });
+        },
+        
+        // if no such db
+        function(cntObj, cb) {
+            if (cntObj && cntObj.type) {
+                cb(null, cntObj);
+            }
+            else {
+                var counterObj = {
+                    type: type,
+                    curr: 0,
+                    dtModified: new Date()
+                };
+                dbCounter.create(counterObj, function(err, newCounter) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    cb(null, newCounter);
+                });
+            }
+            
+        },
         
         // update counter
-        var updateObj = {
-            $set: {
-                id: id,
-                dtModified: new Date()
+        function(cntObj, cb) {
+            if (obj.id) {
+                delete obj.id;
             }
-        };
-        dbCounter.findOneAndUpdate(query, updateObj, function(error, updatedObj) {
-            if (error) {
-                return mainCb(err);
-            }
-            mainCb(null);
-        });
+            // set object id
+            var id = cntObj.curr;
+            obj.id = ++id;
+
+            // update counter
+            var updateObj = {
+                $set: {
+                    id: id,
+                    dtModified: new Date()
+                }
+            };
+            dbCounter.findOneAndUpdate({ type: type }, updateObj, function(error, updatedObj) {
+                if (error) {
+                    return cb(error);
+                }
+                cb(null);
+            });
+        }
+    ], function(err, result) {
+        if (err) {
+            mainCb(err);
+        }
+        mainCb(null, result);
     });
 }
 
@@ -151,7 +190,7 @@ function createNote(noteObj, mainCb) {
     async.waterfall([
         // assing new ID
         function(cb) {
-            assignNewId(noteObj, cb);
+            assignNewId('note', noteObj, cb);
         }, 
         
         // create new record in DB
