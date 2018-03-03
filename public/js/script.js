@@ -36,6 +36,10 @@ jQuery(function($){
     }
     
     formSubmitBtn.on('click', btnSaveNoteEvent);
+    formEl.on('submit', function(e) {
+        e.preventDefault();
+        formSubmitBtn.click();
+    })
     
     /* ============================================================== */
     /*    EVENT FOR ALL NOTE HEADING BUTTONS */
