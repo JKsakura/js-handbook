@@ -48,7 +48,7 @@ function invalidResult(res, msg) {
 }
 function assignNewId(type, obj, mainCb) {
     if (obj.id) {
-        return mainCb(cbMsg('error', 'Object already has ID!'));
+        delete obj.id;
     }
     var query = { type: type };
     dbCounter.findOne(query, function(err, cntObj) {
