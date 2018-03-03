@@ -98,7 +98,7 @@ function assignNewId(type, obj, mainCb) {
             // update counter
             var updateObj = {
                 $set: {
-                    id: id,
+                    curr: id,
                     dtModified: new Date()
                 }
             };
@@ -166,22 +166,24 @@ function getNotesFunc(req, res) {
 function saveNoteFunc(req, res) {
     let data = req.body;
     let noteObj = data.noteObj;
-    
+
     // process
     async.waterfall([
         function(cb) {
             if (!noteObj._id) {
+                console.log("create");
                 createNote(noteObj, cb);
             }
             else {
+                console.log("save");
                 saveNote(noteObj, cb);
             }
         }
-    ], function(err) {
+    ], function(err, result) {
         if (err) {
             return invalidResult(res, err);
         }
-        validResult(res, 'Note has been saved!');
+        validResult(res, 'Note has been saved!', result);
     });
 }
 

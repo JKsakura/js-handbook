@@ -32,20 +32,11 @@ jQuery(function($){
     
     for(var i=0; i<notes.length; i++) {
         //displayNote(notes);
-        console.table(notes);
+        //console.table(notes);
     }
     
-    /* ============================================================== */
-    /*    DECLARE A NEW NOTE OBJECT */
-    /* ============================================================== */
-    function note(title, category, introduction, syntax, description) {
-        this.title = title;
-        this.category = category;
-        this.introduction = introduction;
-        this.syntax = syntax;
-        this.description = description;
-    }
-
+    formSubmitBtn.on('click', btnSaveNoteEvent);
+    
     /* ============================================================== */
     /*    EVENT FOR ALL NOTE HEADING BUTTONS */
     /* ============================================================== */
@@ -156,15 +147,11 @@ jQuery(function($){
     /* ============================================================== */
     /*    FUNCTIONS TO MANAGE THE NOTE LIST  */
     /* ============================================================== */
-    function addNote(title, category, introduction, syntax, description) {
-        var newNote = new note(title, category, introduction, syntax, description);
-        
-        requestNote(newNote, function(noteObj) {
+    function saveNote(note) {
+        requestNote(note, function(noteObj) {
             //displayNote(noteObj);
-            console.log(notes);
+            console.log(noteObj);
         });
-
-        //displayNote(newNote);
     }
 
     // DELETE A NEW NOTE BASED ON THE ID
@@ -179,21 +166,10 @@ jQuery(function($){
             return false;
         }
     }
-
-    // EDIT A NEW NOTE BASED ON THE ID
-    function editNote(id, title, category, introduction, syntax, description) {
-        notes[id].title = title;
-        notes[id].category = category;
-        notes[id].introduction = introduction;
-        notes[id].syntax = syntax;
-        notes[id].description = description;
-
-        //console.table(notes);
-        displayNote(notes[id]);
-    }
-
+    
     // DISPLAY THE ELEMENT WITH NEW DOM STRUCTURE
     function displayNote(note) {
+        console.log(note);
         var itemId, listItem, itemTop, itemBottom, itemHeader, itemTitle, itemCategory, itemIntroduction, itemSyntax, itemDescription, itembtns, itemDelete, itemDeleteBtn;
         // Create New Element
         listItem = $("li");
@@ -260,57 +236,100 @@ jQuery(function($){
     // TRIGGER THE SUBMIT FUNCTION WHEN FORM SUBMITS
     function initialForm(e) {
         var target = e.target;
-        var id, title, category, introduction, syntax, description;
+        var id, title, category, introduction, syntax, description, btnTxt;
         formTitle = $("#add-title");
         formCategory = $("#add-category");
         formIntroduction = $("#add-introduction");
         formSyntax = syntaxEditor.activeFilter.editor;
         formDescription = descriptionEditor.activeFilter.editor;
-
-        if( $(target).hasClass("edit-btn") ) {
-            id = $(target).attr("id").slice(8);
+        
+        id = $(target).attr("id");
+        if (id && id.trim()) {
+            id = id.slice(8);
             var targetNote = notes.find(function(element) {
-                return element;
+                return element.id === id;
             });
-            
-            title = $(formTitle).val(targetNote.title);
-            category = $(formCategory).val(targetNote.category);
-            introduction = $(formIntroduction).val(targetNote.introduction);
-            syntax =formSyntax.setData(targetNote.syntax);
-            description = formDescription.setData(targetNote.description);
-            formSubmitBtn.text("Update Note");
-            $(formEl).unbind("submit").on("submit", function(event) {
-                event.preventDefault();
-                title = $(formTitle).val();
-                category = $(formCategory).val();
-                introduction = $(formIntroduction).val();
-                syntax =formSyntax.getData();
-                description = formDescription.getData();
-
-                // Update The Current Note
-                editNote(title, category, introduction, syntax, description);
-            });
-        } else if( $(target).hasClass("add-btn") ) {
-            title = $(formTitle).val('');
-            category = $(formCategory).val('Category');
-            introduction = $(formIntroduction).val('');
-            syntax = formSyntax.setData('');
-            description = formDescription.setData('');
-            formSubmitBtn.text("Add Note");
-            $(formEl).unbind("submit").submit(function(event) {
-                event.preventDefault();
-                title = $(formTitle).val();
-                category = $(formCategory).val();
-                introduction = $(formIntroduction).val();
-                syntax =formSyntax.getData();
-                description = formDescription.getData();
-                
-                // ADD A NEW ITEM WITH NEW VALUES WHEN ADDING FINISHES
-                addNote(title, category, introduction, syntax, description);
-            });
+            if (targetNote) {
+                title = targetNote.title;
+                category = targetNote.category;
+                introduction = targetNote.introduction;
+                syntax = targetNote.syntax;
+                description = targetNote.description;
+                btnTxt = "Update Note";
+            }
         }
+        else {
+            title = "";
+            category = "";
+            introduction = "";
+            syntax = "";
+            description = "";
+            btnTxt = "Update Note";
+        }
+        
+        
+
+//        if( $(target).hasClass("edit-btn") ) {
+//            id = $(target).attr("id").slice(8);
+//            var targetNote = notes.find(function(element) {
+//                return element.id === id;
+//            });
+//            
+//            title = $(formTitle).val(targetNote.title);
+//            category = $(formCategory).val(targetNote.category);
+//            introduction = $(formIntroduction).val(targetNote.introduction);
+//            syntax =formSyntax.setData(targetNote.syntax);
+//            description = formDescription.setData(targetNote.description);
+//            formSubmitBtn.text("Update Note");
+//            
+//        } else if( $(target).hasClass("add-btn") ) {
+//            title = $(formTitle).val('');
+//            category = $(formCategory).val('Category');
+//            introduction = $(formIntroduction).val('');
+//            syntax = formSyntax.setData('');
+//            description = formDescription.setData('');
+//            formSubmitBtn.text("Add Note");
+//        }
+//        $(formEl).on("submit", function(event) {
+//            event.preventDefault();
+//            title = $(formTitle).val();
+//            category = $(formCategory).val();
+//            introduction = $(formIntroduction).val();
+//            syntax =formSyntax.getData();
+//            description = formDescription.getData();
+//
+//            // Update The Current Note
+//            saveNote(title, category, introduction, syntax, description);
+//        });
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
         formToggle.showForm();
+    }
+    
+    function btnSaveNoteEvent(e) {
+        var _id = '';
+        var title = $(formTitle).val();
+        var category = $(formCategory).val();
+        var introduction = $(formIntroduction).val();
+        var syntax =formSyntax.getData();
+        var description = formDescription.getData();
+
+        // Update The Current Note
+        var obj = setNoteObj(_id, title, category, introduction, syntax, description)
+        saveNote(obj);
+    }
+    
+    function setNoteObj(_id, title, category, introduction, syntax, description) {
+        var resObj = {
+            title: title,
+            category: category,
+            introduction: introduction,
+            syntax: syntax,
+            description: description
+        }
+        if (_id) {
+            resObj['_id'] = _id;
+        }
+        return resObj;
     }
 
     function requestNote(note, cb) {

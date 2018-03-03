@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const ObjId = mongoose.Schema.ObjId;
 
 let note = new Schema({
-    id: {type: String, trim: true},
+    id: {type: Number},
     title: {type: String, trim: true},
     category: {type: String, trim: true},
     introduction: {type: String, trim: true},
