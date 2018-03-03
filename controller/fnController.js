@@ -7,6 +7,7 @@ const async = require('async');
 const moment = require('moment');
 const dbNote = require('../model/note.js');
 const dbCounter = require('../model/counter.js');
+const dbTag = require('../model/tag.js');
 
 module.exports = {
     // get pages
@@ -32,7 +33,7 @@ function cbMsg(type, msg) {
 function validResult(res, msg) {
     var args = arguments;
     var obj = cbMsg('success', msg);
-    if (arguments[2]) obj.result = arguments[2];
+    if (args[2]) obj.result = args[2];
     return res.json(obj);
 }
 function invalidResult(res, msg) {
@@ -169,6 +170,17 @@ function saveNoteFunc(req, res) {
 
     // process
     async.waterfall([
+        // check note tags. if any, create new tag if not exists
+        function (cb) {
+            if (!noteObj.tags || !Array.isArray(noteObj.tags) || !noteObj.tags.length) {
+                cb(null);
+            }
+            else {
+                checkAndUpdateNoteTags(noteObj, cb);
+            }
+        },
+        
+        // create/update note
         function(cb) {
             if (!noteObj._id) {
                 console.log("create");
@@ -184,6 +196,41 @@ function saveNoteFunc(req, res) {
             return invalidResult(res, err);
         }
         validResult(res, 'Note has been saved!', result);
+    });
+}
+
+function checkAndUpdateNoteTags(noteObj, mainCb) {
+    var tags = noteObj.tags;
+    var idTags = [];
+    
+    async.eachOfSeries(tags, function(tag, i, cb) {
+        dbTag.findOne({id: tag}, function(err, foundTag) {
+            if (err) {
+                return cb(err);
+            }
+            if (foundTag) {
+                idTags.push(foundTag._id);
+                cb(null);
+            }
+            else {
+                dbTag.create({id: tag}, function(error, newTag) {
+                    if (error) {
+                        return cb(err);
+                    }
+                    if (!newTag) {
+                        return cb(cbMsg('error', 'Unable to create new tag.'));
+                    }
+                    idTags.push(newTag._id);
+                    cb(null);
+                });
+            }
+        });
+    }, function(err) {
+        if (err) {
+            return mainCb(err);
+        }
+        noteObj.tags = idTags;
+        mainCb(null);
     });
 }
 
