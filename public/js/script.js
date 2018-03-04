@@ -100,9 +100,6 @@ jQuery(function($){
     
     formEl.on('submit', function(e) {
         e.preventDefault();
-        $("html, body").animate({
-            scrollTop: 0
-        })
         formSubmitBtn.click();
     })
     
@@ -178,6 +175,9 @@ jQuery(function($){
         var obj = getFormData();
         requestNote(obj, 'save', function(noteObj) {
             displayNote(noteObj);
+            $("html, body").animate({
+                scrollTop: 0
+            })
         });
     }
     
@@ -282,7 +282,7 @@ jQuery(function($){
         formDescription = descriptionEditor.activeFilter.editor;
         
         id = $(target).attr("id");
-        if (id && id.trim()) {
+        if ($(target).hasClass("edit-btn")) {
             id = id.slice(8);
             var targetNote = notes.find(function(element) {
                 return element.id && element.id.toString() === id;
@@ -313,6 +313,7 @@ jQuery(function($){
         $(formIntroduction).val(introduction);
         formSyntax.setData(syntax);
         formDescription.setData(description);
+        $(formSubmitBtn).text(btnTxt);
         
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
         formToggle.showForm();

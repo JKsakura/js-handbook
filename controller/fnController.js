@@ -280,7 +280,7 @@ function createNote(noteObj, mainCb) {
 function saveNote(noteObj, mainCb) {
     var query = { _id: noteObj._id };
     var updateObj = noteObj;
-    dbNote.findOneAndUpdate(query, updateObj, function(err, result) {
+    dbNote.findOneAndUpdate(query, updateObj, {new: true}, function(err, result) {
         if (err) {
             return mainCb(err);
         }
