@@ -98,7 +98,7 @@ jQuery(function($){
     
     formSubmitBtn.on('click', saveNote);
     
-    formEl.on('submit', function(e) {
+    $(formEl).on('submit', function(e) {
         e.preventDefault();
         formSubmitBtn.click();
     })
@@ -109,7 +109,7 @@ jQuery(function($){
     function noteHeader() {
         $(addBtn).on("click", function(e) {
             var target = e.target;
-            formToggle.toggleForm(300);
+            formToggle.toggleForm();
             setForm(e);
             manageBtnToggle.hideBtn();
             addBtnToggle.hideBtn();
@@ -179,6 +179,7 @@ jQuery(function($){
                 scrollTop: 0
             })
         });
+        formToggle.hideForm();
     }
     
     // DELETE A NEW NOTE BASED ON THE ID
@@ -208,8 +209,6 @@ jQuery(function($){
     // DISPLAY THE ELEMENT WITH NEW DOM STRUCTURE
     function displayNote(note) {
         var itemId, listItem, itemTop, itemBottom, itemHeader, itemTitle, itemCategory, itemIntroduction, itemSyntax, itemDescription, itembtns, itemDelete, itemDeleteBtn;
-        // Create New Element
-        listItem = $("li");
 
         // Define ID
         var itemId = "note"+note.id;
@@ -234,33 +233,38 @@ jQuery(function($){
 
         /* =========== Item Top ============ */
         // Item Header
-        itemTitle = "<p class=\""+TitleClass+"\">"+note.title+"</p>";
-        itemCategory = "<h5 class=\""+categoryClass+"\">"+note.category+"</h5>";
-        itemHeader = "<div class=\""+headerClass+"\">"+itemTitle+itemCategory+"</div>";
+        itemTitle = $("<p></p>").addClass(TitleClass).text(note.title);
+        itemCategory = $("<h5></h5>").addClass(categoryClass).text(note.category);
+        
+        itemHeader = $("<div></div>").addClass(headerClass).append(itemTitle, itemCategory);
+        
         // Item Introduction
-        itemIntroduction = "<p class=\""+introductionClass+"\">"+note.introduction+"</p>";
-
-        itemTop = "<div class=\""+topClass+"\">"+itemHeader+itemIntroduction+"</div>";
-
+        itemIntroduction = $("<p></p>").addClass(introductionClass).text(note.introduction);
+        
+        itemTop = $("<div></div>").addClass(topClass).append(itemHeader, itemIntroduction);
+        
         /* =========== Item Bottom ============ */
-        itemSyntax = "<div class=\""+syntaxClass+"\">"+note.syntax+"</div>";
-        itemDescription = "<div class=\""+descriptionClass+"\">"+note.description+"</div>";
-
-        itemBottom = "<div class=\""+bottomClass+"\">"+itemSyntax+itemDescription+"</div>";
-
+        syntaxTitle = $("<h4></h4>").text("Syntax");
+        itemSyntax = $("<div></div>").addClass(syntaxClass).html(note.syntax).prepend(syntaxTitle);
+        descriptionTitle = $("<h4></h4>").text("Description");
+        itemDescription = $("<div></div>").addClass(descriptionClass).html(note.description).prepend(descriptionTitle);
+        
+        itemBottom = $("<div></div>").addClass(bottomClass).append(itemSyntax, itemDescription);
+        
         /* =========== Item Buttons ============ */
-        itemEditBtn = "<i class=\""+editBtnClass+"\"></i>";
-        itemEdit = "<button id=\""+editId+"\" class=\""+editClass+"\">"+itemEditBtn+"</button>";
-        itemDeleteBtn = "<i class=\""+deleteBtnClass+"\"></i>";
-        itemDelete = "<button id=\""+deleteId+"\" class=\""+deleteClass+"\">"+itemDeleteBtn+"</button>";
-
-        itembtns = "<div class=\""+btnsClass+"\">"+itemDelete+itemEdit+"</div>";
-
+        itemDeleteBtn = $("<i></i>").addClass(deleteBtnClass);
+        itemDelete = $("<button></button>").attr("id", deleteId).addClass(deleteClass).append(itemDeleteBtn);
+        
+        itemEditBtn = $("<i></i>").addClass(editBtnClass);
+        itemEdit = $("<button></button>").attr("id", editId).addClass(editClass).append(itemEditBtn);
+        
+        itembtns = $("<div></div>").addClass(btnsClass).append(itemDelete, itemEdit);
+        
         /* =========== List Item ============ */
-        listItem = "<li id=\""+itemId+"\" class=\""+itemClass+"\">"+itemTop+itemBottom+itembtns+"</li>";
-
+        listItem = $("<li></li>").attr("id", itemId).addClass(itemClass).append(itemTop, itemBottom, itembtns);
+        
         if( $("#"+itemId).length > 0 ) {
-            $("#"+itemId).html(itemTop+itemBottom+itembtns);
+            $("#"+itemId).replaceWith(listItem);
             $("#"+itemId).find(".item-btns").addClass("active");
         } else {
             $(noteList).append(listItem);
