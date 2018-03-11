@@ -7,12 +7,16 @@ const async = require('async');
 const moment = require('moment');
 const dbNote = require('../model/note.js');
 const dbCounter = require('../model/counter.js');
+const dbCategory = require('../model/category.js');
 const dbTag = require('../model/tag.js');
 
 module.exports = {
     // get pages
     getHome: getHomeFunc,
     getCategoryPage: getCategoryPageFunc,
+    // ONLY for test
+    testCategoryPage: testCategoryPageFunc,
+    testUpdateCategoriesFunc: testUpdateCategoriesFunc,
 
     // post functions
     getNotes: getNotesFunc,
@@ -164,6 +168,49 @@ function getCategoryPageFunc(req, res, next) {
         return res.render('./category', {
             title: "Category",
             category: result || []
+        });
+    });
+}
+
+function testCategoryPageFunc(req, res, next) {
+    // process
+    async.waterfall([
+        
+    ], function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        return res.render('./testCategory', {
+            title: "Test-Category"
+        });
+    });
+}
+
+function testUpdateCategoriesFunc(req, res) {
+    // fetch data
+    var category = req.body.categoty || [];
+    
+    dbCategory.remove({}, function (err) {
+        if (err) {
+            return invalidResult(res, err.message);
+        }
+        async.eachOfSeries(category, function(cat, i, cb) {
+            var newCat = {
+                id: i+1,
+                name: cat
+            };
+            dbCategory.create(newCat, function(e) {
+                if (e) {
+                    return cb(e);
+                }
+                cb(null);
+            });
+        }, function(e) {
+            if (e) {
+                return invalidResult(res, e.message);
+            }
+            console.log("Success");
+            validResult(res, 'Update all categories!');
         });
     });
 }
