@@ -263,6 +263,12 @@ jQuery(function($){
     // REQUEST THE CURRENT DETAIL CONTENT
     function requestDetail(target) {
         var idNote = $(target).attr("id").slice(4);
+        $.post('/getSingleNote', {
+            idNote: idNote
+        }, function(data, status) {
+            //console.log(data);
+            cb(data.result);
+        });
     }
     
 /* ============================================================== */
