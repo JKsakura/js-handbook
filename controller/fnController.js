@@ -217,11 +217,13 @@ function testUpdateCategoriesFunc(req, res) {
 
 function getUserNotes(params, mainCb) {
     var query = params.query || {};
+    var selection = {id:1,category:1,tags:1,title:1,introduction:1};
     var population = [
-        {path: "tags"}
+        {path: "tags"},
+        {path: "category"}
     ];
     
-    dbNote.find(query).populate(population).exec(function(err, results) {
+    dbNote.find(query).populate(population).select(selection).exec(function(err, results) {
         if (err) {
             return mainCb(err);
         }
@@ -229,6 +231,9 @@ function getUserNotes(params, mainCb) {
         notes.forEach(function(note) {
             if (note.tags && note.tags.length) {
                 note.tags = note.tags.map(tag=>tag.name);
+            }
+            if (note.category && note.category.name) {
+                note.category = note.category.name;
             }
         });
         mainCb(null, notes);
@@ -249,6 +254,16 @@ function saveNoteFunc(req, res) {
 
     // process
     async.waterfall([
+        // check if category exists. no? return error
+        function(cb) {
+            if (!noteObj.category || !noteObj.category.trim()) {
+                return cb(new Error("Unable to create note because you don't have any category."));
+            }
+            else {
+                findCategoryRef(noteObj, cb);
+            }
+        },
+        
         // check note tags. if any, create new tag if not exists
         function (cb) {
             if (!noteObj.tags || !Array.isArray(noteObj.tags) || !noteObj.tags.length) {
@@ -275,6 +290,30 @@ function saveNoteFunc(req, res) {
             return invalidResult(res, err);
         }
         validResult(res, 'Note has been saved!', result);
+    });
+}
+
+function findCategoryRef(noteObj, mainCb) {
+    var category = noteObj.category;
+    
+    async.waterfall([
+        function(cb) {
+            dbCategory.findOne({name: category}, function(err, foundCat) {
+                if (err) {
+                    return cb(err);
+                }
+                if (!foundCat || !foundCat._id) {
+                    return cb(cbMsg('error', "Unable to find the category!"));
+                }
+                cb(null, foundCat._id);
+            });
+        }
+    ], function(err, idCat) {
+        if (err) {
+            return mainCb(err);
+        }
+        noteObj.category = idCat.toString();
+        mainCb(null);
     });
 }
 
