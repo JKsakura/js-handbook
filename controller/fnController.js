@@ -154,11 +154,12 @@ function getCategoryPageFunc(req, res, next) {
     // process
     async.waterfall([
         function (cb) {
-            dbNote.find().distinct('category', function(err, categories) {
+            dbCategory.find({}, function(err, categories) {
                 if (err) {
                     return cb(err);
                 }
-                cb(null, categories);
+                var catName = categories.map(obj=>obj.toObject().name);
+                cb(null, catName);
             });
         }
     ], function(err, result) {
