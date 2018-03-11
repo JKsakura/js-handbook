@@ -90,11 +90,9 @@ jQuery(function($){
     noteHeader();
     noteBody();
     
-    formSubmitBtn.on('click', saveNote);
-    
     $(formEl).on('submit', function(e) {
         e.preventDefault();
-        formSubmitBtn.click();
+        saveNote();
     });
     
     // EVENT FOR ALL NOTE HEADING BUTTONS
@@ -153,7 +151,7 @@ jQuery(function($){
 /* ============================================================== */
 /*    SINGLE LIST CRUD  */
 /* ============================================================== */
-    function saveNote(e) {
+    function saveNote() {
         // Update The Current Note
         var obj = getFormData();
         requestNote(obj, 'save', function(noteObj) {
@@ -164,6 +162,9 @@ jQuery(function($){
             })
         });
         formToggle.hideForm();
+        addBtnToggle.showBtn();
+        doneBtnToggle.hideBtn();
+        manageBtnToggle.toggleBtn();
     }
     
     // DELETE A NEW NOTE BASED ON THE ID
@@ -297,7 +298,7 @@ jQuery(function($){
         else {
             _id = '';
             title = "";
-            category = "Category";
+            category = "";
             introduction = "";
             syntax = "";
             description = "";
@@ -314,9 +315,6 @@ jQuery(function($){
         
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
         formToggle.showForm();
-        addBtnToggle.showBtn();
-        doneBtnToggle.hideBtn();
-        manageBtnToggle.toggleBtn();
     }
 
     function getFormData() {
