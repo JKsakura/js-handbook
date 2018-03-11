@@ -8,4 +8,7 @@ module.exports = function(app) {
     app.post('/getNotes', ctrl.getNotes);
     app.post('/saveNote', ctrl.saveNote);
     app.post('/deleteNote', ctrl.deleteNote);
+    app.post('/getSingleNote', ctrl.getSingleNote);
+    
+    app.post('/getCategories', ctrl.getCategories);
 };
