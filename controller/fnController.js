@@ -251,7 +251,7 @@ function getNotesFunc(req, res) {
 function saveNoteFunc(req, res) {
     let data = req.body;
     let noteObj = data.noteObj;
-
+    
     // process
     async.waterfall([
         // check if category exists. no? return error
@@ -289,7 +289,9 @@ function saveNoteFunc(req, res) {
         if (err) {
             return invalidResult(res, err);
         }
-        validResult(res, 'Note has been saved!', result);
+        var returnedNote = JSON.parse(JSON.stringify(result));
+        returnedNote.category = noteObj.category;
+        validResult(res, 'Note has been saved!', returnedNote);
     });
 }
 

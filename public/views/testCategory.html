@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1"/>
+    <title>JavaScript Handbook</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/ckeditor/ckeditor.js"></script>
+  </head>
+  <body></body>
+  <script>
+    var categoty = ['javascript', 'jquery'];
+    $.post('/testUpdateCategories', {
+        categoty: categoty
+    }, function(data, status) {
+        //console.log(data);
+        console.log(data.result);
+    });
+  </script>
+</html>
