@@ -6,22 +6,17 @@ const fs = require('fs');
 const async = require('async');
 const moment = require('moment');
 const dbNote = require('../model/note.js');
-const dbCategory = require('../model/category.js');
 const dbCounter = require('../model/counter.js');
 const dbTag = require('../model/tag.js');
 
 module.exports = {
     // get pages
     getHome: getHomeFunc,
-    getCategoryPage: getCategoryPageFunc,
 
     // post functions
     getNotes: getNotesFunc,
     saveNote: saveNoteFunc,
-    deleteNote: deleteNoteFunc,
-    getSingleNote: getSingleNoteFunc,
-    
-    getCategories: getCategoriesFunc
+    deleteNote: deleteNoteFunc
 };
 
 
@@ -122,40 +117,6 @@ function assignNewId(type, obj, mainCb) {
         mainCb(null, result);
     });
 }
-function getSingleNoteObj(idNote, mainCb) {
-    var query = {
-        id: idNote
-    };
-    dbNote.findOne(query, function(err, foundNote) {
-        if (err) {
-            return mainCb(err);
-        }
-        if (!foundNote) {
-            return mainCb(cbMsg('error', "Unable to find the note!"));
-        }
-        mainCb(null, foundNote);
-    });
-}
-function getNoteCategories(idCats, mainCb) {
-    var query = {};
-    if (idCats) {
-        if (!Array.isArray(idCats)) {
-            query._id = {$in: [idCats]};
-        }
-        else {
-            query._id = {$in: idCats};
-        }
-    }
-    dbCategory.find(query, function(err, categories) {
-        if (err) {
-            return mainCb(err);
-        }
-        if (!categories || !categories.length) {
-            return mainCb(cbMsg('error', "Unable to find any category"));
-        }
-        mainCb(null, categories);
-    });
-}
 
 
 // =========================================
@@ -177,31 +138,9 @@ function getHomeFunc(req, res, next) {
         if (err) {
             return next(err);
         }
-        return res.render('/handbook', {
+        return res.render('handbook', {
             title: "Homepage",
             notes: result || []
-        });
-    });
-}
-
-function getCategoryPageFunc(req, res) {
-    // process
-    async.waterfall([
-        function (cb) {
-            getNoteCategories('', function(err, categories) {
-                if (err) {
-                    return cb(err);
-                }
-                cb(null, categories);
-            });
-        }
-    ], function(err, result) {
-        if (err) {
-            return next(err);
-        }
-        return res.render('/category', {
-            title: "Category",
-            category: result || []
         });
     });
 }
@@ -209,12 +148,10 @@ function getCategoryPageFunc(req, res) {
 function getUserNotes(params, mainCb) {
     var query = params.query || {};
     var population = [
-        {path: "tags"},
-        {path: "category"}
+        {path: "tags"}
     ];
-    var selection = {id:1,title:1,category:1,introduction:1};
     
-    dbNote.find(query).populate(population).select(selection).exec(function(err, results) {
+    dbNote.find(query).populate(population).exec(function(err, results) {
         if (err) {
             return mainCb(err);
         }
@@ -251,16 +188,6 @@ function saveNoteFunc(req, res) {
                 checkAndUpdateNoteTags(noteObj, cb);
             }
         },
-        
-//        // check note Category, 
-//        function(cb) {
-//            if (!noteObj.category || !Array.isArray(noteObj.category) || !noteObj.category.length) {
-//                cb(null);
-//            }
-//            else {
-//                checkAndUpdateNoteCategory(noteObj, cb);
-//            }
-//        },
         
         // create/update note
         function(cb) {
@@ -377,37 +304,5 @@ function deleteNoteFunc(req, res) {
             code: 0,
             message: "Note has been removed!"
         });
-    });
-}
-
-function getSingleNoteFunc(req, res) {
-    // fetch data
-    var idNote = req.body.idNote;
-    
-    // process
-    async.waterfall([
-        function(cb) {
-            getSingleNoteObj(idNote, cb);
-        }
-    ], function(err, result) {
-        if (err) {
-            return invalidResult(res, err.message);
-        }
-        validResult(res, '', result);
-    });
-}
-
-function getCategoriesFunc(req, res) {
-    var idCats = req.body.idCats;
-    
-    async.waterfall([
-        function(cb) {
-            getNoteCategories(idCats, cb);
-        }
-    ], function(err, results) {
-        if (err) {
-            return invalidResult(res, err.message);
-        }
-        validResult(res, '', results);
     });
 }
