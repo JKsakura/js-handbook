@@ -1,5 +1,5 @@
 /* ============================================================== */
-/*    LIST OF ALL MODULES IN THE SCRIPT.JS 
+/*    LIST OF ALL MODULES IN THE SCRIPT.JS
       - GLOBAL VARIABLES
       - VISUAL ELEMENT OF DOM
       - MAIN NOTE LIST
@@ -8,7 +8,6 @@
       - FORM METHODS
 */
 /* ============================================================== */
-
 // GLOBAL VARIABLES
 var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor, formTitle, formCategory, formIntroduction, formSyntax, formDescription, formNoteID;
 
@@ -29,6 +28,10 @@ jQuery(function($){
     doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
     
+    // DISPLAY ALL NOTES WHILE LOADING
+    for(var i=0; i<notes.length; i++) {
+        displayNote(notes[i]);
+    }
 /* ============================================================== */
 /*    VISUAL ELEMENT OF DOM */
 /* ============================================================== */ 
@@ -62,11 +65,11 @@ jQuery(function($){
             $(manageBtn).hide();
         },
         toggleBtn: function() {
-            var children = $(noteList).children().length;
-            if( $(noteList).is(":parent") ) {
-                $(manageBtn).show();
-            } else {
+            noteList = $("#noteList");
+            if( $(noteList).is(":empty") ) {
                 $(manageBtn).hide();
+            } else {
+                $(manageBtn).show();
             }
         }
     }
@@ -131,10 +134,6 @@ jQuery(function($){
     
     // EVENT FOR ALL NOTE BODY BUTTONS
     function noteBody() {
-        // DISPLAY ALL NOTES WHILE LOADING
-        for(var i=0; i<notes.length; i++) {
-            displayNote(notes[i]);
-        }
         // MAIN NOTE BODY METHODS
         $(noteList).on("click", function(e) {
             var target = e.target;
@@ -146,12 +145,11 @@ jQuery(function($){
                     scrollTop: $(noteForm).offset().top 
                 });
             } else if( $(target).hasClass("list-item") ) {
-                requestDetail(target);
-                console.log('works');
+                //requestDetail(target);
             }
         });
     }
-
+    
 /* ============================================================== */
 /*    SINGLE LIST CRUD  */
 /* ============================================================== */
@@ -159,6 +157,7 @@ jQuery(function($){
         // Update The Current Note
         var obj = getFormData();
         requestNote(obj, 'save', function(noteObj) {
+            notes.push(noteObj);
             displayNote(noteObj);
             $("html, body").animate({
                 scrollTop: 0
@@ -178,11 +177,11 @@ jQuery(function($){
             var index = notes.findIndex(function(element) {
                 return element.id && element.id.toString() === targetID;
             });
-            
             if (index > -1) {
                 var targetNote = notes[index];
                 requestNote(targetNote, 'delete', function() {
                     // remove from view
+                    notes.splice(index,1);
                     $("#note"+targetID).remove();
                 });
             }
@@ -315,6 +314,9 @@ jQuery(function($){
         
         // SHOW THE FORM AFTER IT HAS BEEN ASSIGNED VALUES
         formToggle.showForm();
+        addBtnToggle.showBtn();
+        doneBtnToggle.hideBtn();
+        manageBtnToggle.toggleBtn();
     }
 
     function getFormData() {

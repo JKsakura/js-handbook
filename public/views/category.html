@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1"/>
+    <title>JavaScript Handbook</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/ckeditor/ckeditor.js"></script>
+  </head>
+  <body>
+    <!-- START SITE-->
+    <div class="site">
+      <!-- START HEADER-->
+      <header></header>
+      <!-- START WRAPPER-->
+      <main class="wrapper" role="main">
+        <section class="main-content" id="notes-module">
+          <div class="wrap">
+            <div class="notes-wrapper">
+              <div class="notes-header">
+                <button class="add-btn btn btn-primary" id="note-add-btn"><i class="fas fa-plus-circle"></i><span>Add Note</span></button>
+                <button class="manage-btn btn btn-primary" id="note-manage-btn"> <i class="fas fa-edit"></i><span>Manage</span></button>
+                <button class="done-btn btn btn-success" id="note-done-btn"> <span>Done</span></button>
+              </div>
+              <div class="single-note main-content">
+                <h2></h2>
+                <h5></h5>
+                <p></p>
+                <div class="single-syntax-container">
+                  <h3></h3>
+                  <div class="single-syntax">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                </div>
+                <div class="single-description-container">
+                  <h3></h3>
+                  <div class="single-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div>
+                </div>
+              </div>
+              <div class="notes-body">
+                <ul id="noteList"></ul>
+              </div>
+              <div class="new-form-container notes-form" id="note-form-container">
+                <div class="section-title">
+                  <h4>Add a New Note</h4>
+                </div>
+                <form class="new-form" id="note-form">
+                  <div class="form-field">
+                    <input class="form-control" id="add-title" type="text" placeholder="Title" required="required"/>
+                  </div>
+                  <div class="form-field"><span class="select-menu">
+                      <select class="form-control" id="add-category" required="required">
+                        <option value="Category">Category</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="jQuery">jQuery</option>
+                      </select></span></div>
+                  <div class="form-field">
+                    <textarea class="form-control" id="add-introduction" name="introduction" placeholder="Introduction"></textarea>
+                  </div>
+                  <div class="form-field">
+                    <textarea class="form-control syntax-editor" id="add-syntax" name="syntax" placeholder="Syntax"></textarea>
+                  </div>
+                  <div class="form-field">
+                    <textarea class="form-control description-editor" id="add-description" name="description" placeholder="Description"></textarea>
+                  </div>
+                  <div class="form-field">
+                    <button class="btn btn-success" id="form-submit" type="button" value="Add New">Add Note</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <!-- START FOOTER-->
+      <footer></footer>
+    </div>
+  </body>
+  <script defer="defer" src="../js/fontawesome-all.min.js"></script>
+  <script>var category = </script>
+</html>
