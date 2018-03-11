@@ -1,21 +1,24 @@
-//var requestURL = "../notes.json";
-//var request = new XMLHttpRequest();
-//request.open('GET', requestURL);
-//request.responseType = 'json';
-//request.send();
-//request.onload = function() {
-//    var notes = request.response;
-//    console.table(notes);
-//}
+/* ============================================================== */
+/*    LIST OF ALL MODULES IN THE SCRIPT.JS 
+      - GLOBAL VARIABLES
+      - VISUAL ELEMENT OF DOM
+      - MAIN NOTE LIST
+      - SINGLE LIST CRUD
+      - SINGLE DETAIL
+      - FORM METHODS
+*/
+/* ============================================================== */
 
-// Declare Global Note Vars
+// GLOBAL VARIABLES
 var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor, formTitle, formCategory, formIntroduction, formSyntax, formDescription, formNoteID;
 
+// CALL MAIN JQUERY FUNCTION
 jQuery(function($){
-    // Declare Global CKEditor WYSIWYG Fields
+    // INITIAL GLOBAL CKEDITOR WYSIWYG FIELDS
     syntaxEditor = CKEDITOR.replace('add-syntax');
     descriptionEditor = CKEDITOR.replace('add-description');
     
+    // INITIAL ALL GLOBAL ELEMENT
     noteForm = $("#note-form-container");
     editBtn = $("#note-edit-btn");
     doneBtn = $("#note-done-btn");
@@ -26,14 +29,9 @@ jQuery(function($){
     doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
     
-    //console.log(notes);
-    for(var i=0; i<notes.length; i++) {
-        displayNote(notes[i]);
-    }
-    
-    /* ============================================================== */
-    /*    TOGGLE FOR NOTE FORM */
-    /* ============================================================== */ 
+/* ============================================================== */
+/*    VISUAL ELEMENT OF DOM */
+/* ============================================================== */ 
     var formToggle = {
         showForm: function() {
             $(noteForm).fadeIn(300);
@@ -46,9 +44,7 @@ jQuery(function($){
         }
     }
 
-    /* ============================================================== */
-    /*    TOGGLE FOR ADD BUTTON */
-    /* ============================================================== */ 
+    // TOGGLE FOR ADD BUTTON
     var addBtnToggle = {
         showBtn: function() {
             $(addBtn).show();
@@ -57,10 +53,7 @@ jQuery(function($){
             $(addBtn).hide();
         }
     }
-
-    /* ============================================================== */
-    /*    TOGGLE FOR MANAGING MANAGE BUTTON */
-    /* ============================================================== */ 
+    // TOGGLE FOR MANAGING MANAGE BUTTON
     var manageBtnToggle = {
         showBtn: function() {
             $(manageBtn).show();
@@ -77,10 +70,8 @@ jQuery(function($){
             }
         }
     }
-
-    /* ============================================================== */
-    /*    TOGGLE FOR DONE BUTTON */
-    /* ============================================================== */ 
+    
+    // TOGGLE FOR DONE BUTTON
     var doneBtnToggle = {
         showBtn: function() {
             $(doneBtn).show();
@@ -90,9 +81,9 @@ jQuery(function($){
         }
     }
     
-    /* ============================================================== */
-    /*    MAIN NOTE FUNCTIONS CALL */
-    /* ============================================================== */ 
+/* ============================================================== */
+/*    MAIN NOTE LIST */
+/* ============================================================== */ 
     noteHeader();
     noteBody();
     
@@ -101,11 +92,9 @@ jQuery(function($){
     $(formEl).on('submit', function(e) {
         e.preventDefault();
         formSubmitBtn.click();
-    })
+    });
     
-    /* ============================================================== */
-    /*    EVENT FOR ALL NOTE HEADING BUTTONS */
-    /* ============================================================== */
+    // EVENT FOR ALL NOTE HEADING BUTTONS
     function noteHeader() {
         $(addBtn).on("click", function(e) {
             var target = e.target;
@@ -139,11 +128,14 @@ jQuery(function($){
 
         manageBtnToggle.toggleBtn();
     }
-
-    /* ============================================================== */
-    /* EVENT FOR ALL NOTE BODY BUTTONS */
-    /* ============================================================== */
+    
+    // EVENT FOR ALL NOTE BODY BUTTONS
     function noteBody() {
+        // DISPLAY ALL NOTES WHILE LOADING
+        for(var i=0; i<notes.length; i++) {
+            displayNote(notes[i]);
+        }
+        // MAIN NOTE BODY METHODS
         $(noteList).on("click", function(e) {
             var target = e.target;
             if( $(target).hasClass("delete-btn") ) {
@@ -153,24 +145,17 @@ jQuery(function($){
                 $("html, body").animate({
                     scrollTop: $(noteForm).offset().top 
                 });
-            } else if( $(target).hasClass("item-top") ) {
-                $(target).parent().find(".item-bottom").stop().slideToggle(150);
+            } else if( $(target).hasClass("list-item") ) {
+                requestDetail(target);
+                console.log('works');
             }
         });
     }
 
-    /* ============================================================== */
-    /*    FUNCTIONS TO MANAGE THE NOTE LIST  */
-    /* ============================================================== */
+/* ============================================================== */
+/*    SINGLE LIST CRUD  */
+/* ============================================================== */
     function saveNote(e) {
-//        var _id = '';
-//        var title = $(formTitle).val();
-//        var category = $(formCategory).val();
-//        var introduction = $(formIntroduction).val();
-//        var syntax =formSyntax.getData();
-//        var description = formDescription.getData();
-        
-
         // Update The Current Note
         var obj = getFormData();
         requestNote(obj, 'save', function(noteObj) {
@@ -187,7 +172,7 @@ jQuery(function($){
         var targetID = $(e).attr("id").slice(10);
         var r = confirm("Are You Sure You Want to Delete This Item?");
         if( r === true ) {
-//            notes[targetID] = '';
+            //notes[targetID] = '';
             //console.table(notes);
             
             var index = notes.findIndex(function(element) {
@@ -271,9 +256,18 @@ jQuery(function($){
         }
     }
 
-    /* ============================================================== */
-    /* FUNCTIONS TO MANAGE THE FORM */   
-    /* ============================================================== */
+    
+/* ============================================================== */
+/* SINGLE DETAIL */   
+/* ============================================================== */
+    // REQUEST THE CURRENT DETAIL CONTENT
+    function requestDetail(target) {
+        var idNote = $(target).attr("id").slice(4);
+    }
+    
+/* ============================================================== */
+/* FORM METHODS */   
+/* ============================================================== */
     // TRIGGER THE SUBMIT FUNCTION WHEN FORM SUBMITS
     function setForm(e) {
         var target = e.target;
@@ -377,4 +371,3 @@ jQuery(function($){
         }
     }
 });
-
