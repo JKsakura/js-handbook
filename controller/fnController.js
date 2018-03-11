@@ -12,6 +12,7 @@ const dbTag = require('../model/tag.js');
 module.exports = {
     // get pages
     getHome: getHomeFunc,
+    getCategoryPage: getCategoryPageFunc,
 
     // post functions
     getNotes: getNotesFunc,
@@ -138,9 +139,31 @@ function getHomeFunc(req, res, next) {
         if (err) {
             return next(err);
         }
-        return res.render('handbook', {
+        return res.render('./handbook', {
             title: "Homepage",
             notes: result || []
+        });
+    });
+}
+
+function getCategoryPageFunc(req, res, next) {
+    // process
+    async.waterfall([
+        function (cb) {
+            dbNote.find().distinct('category', function(err, categories) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null, categories);
+            });
+        }
+    ], function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        return res.render('./category', {
+            title: "Category",
+            category: result || []
         });
     });
 }
