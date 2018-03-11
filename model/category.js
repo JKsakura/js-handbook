@@ -4,7 +4,11 @@ const ObjId = Schema.ObjectId;
 
 let category = new Schema({
     id: {type: Number},
-    name: {type: String, trim: true}
+    name: {type: String, trim: true},
+    idNotes: [{
+        type: ObjId,
+        ref: 'note'
+    }]
 }, {collection: 'Category'});
 
 let _Category = mongoose.model('category', category);

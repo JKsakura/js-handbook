@@ -154,12 +154,14 @@ function getCategoryPageFunc(req, res, next) {
     // process
     async.waterfall([
         function (cb) {
-            dbCategory.find({}, function(err, categories) {
+            var population = [
+                {path: 'idNotes'}
+            ];
+            dbCategory.find({}).populate(population).exec(function(err, categories) {
                 if (err) {
                     return cb(err);
                 }
-                var catName = categories.map(obj=>obj.toObject().name);
-                cb(null, catName);
+                cb(null, categories);
             });
         }
     ], function(err, result) {
@@ -262,7 +264,7 @@ function saveNoteFunc(req, res) {
                 return cb(new Error("Unable to create note because you don't have any category."));
             }
             else {
-                findCategoryRef(noteObj, cb);
+                findAndUpdateCategoryRef(noteObj, cb);
             }
         },
         
@@ -286,9 +288,24 @@ function saveNoteFunc(req, res) {
                 console.log("save");
                 saveNote(noteObj, cb);
             }
+        },
+        
+        // update Category
+        function(result, cb) {
+            var query = {_id: result.category};
+            var updateObj = {
+                $addToSet: {idNotes: result._id}
+            };
+            dbCategory.findOneAndUpdate(query, updateObj, function(err) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null, result);
+            });
         }
     ], function(err, result) {
         if (err) {
+            console.log(err);
             return invalidResult(res, err);
         }
         result.category = noteCat;
@@ -296,10 +313,11 @@ function saveNoteFunc(req, res) {
     });
 }
 
-function findCategoryRef(noteObj, mainCb) {
+function findAndUpdateCategoryRef(noteObj, mainCb) {
     var category = noteObj.category;
     
     async.waterfall([
+        // find category and assign _id to noteObject
         function(cb) {
             dbCategory.findOne({name: category}, function(err, foundCat) {
                 if (err) {
@@ -406,15 +424,50 @@ function saveNote(noteObj, mainCb) {
 
 function deleteNoteFunc(req, res) {
     var _idNote = req.body._idNote;
+    var foundNote;
     
-    dbNote.findOneAndRemove({_id: _idNote}, function(err) {
-        if (err) {
-            return res.json(err);
+    async.waterfall([
+        // find note from db
+        function(cb) {
+            dbNote.findOne({_id: _idNote}, function(err, result) {
+                if (err) {
+                    return cb(err);
+                }
+                if (!result) {
+                    return cb(cbMsg('error', "Unable to find the note"));
+                }
+                foundNote = result.toObject();
+                cb(null);
+            });
+        },
+        
+        // find category and remove note id from that category
+        function(cb) {
+            var query = {_id: foundNote.category};
+            var updateObj = {
+                $pull: {idNotes: foundNote._id}
+            };
+            dbCategory.findOneAndUpdate(query, updateObj, function(err) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null);
+            });
+        },
+        
+        // remove note
+        function(cb) {
+            dbNote.findOneAndRemove({_id: _idNote}, function(err) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null);
+            });
         }
-        return res.json({
-            type:'succes',
-            code: 0,
-            message: "Note has been removed!"
-        });
+    ], function(err) {
+        if (err) {
+            return invalidResult(res, err.message);
+        }
+        validResult(res, 'Note has been removed');
     });
 }

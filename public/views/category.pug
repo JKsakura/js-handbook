@@ -16,7 +16,7 @@ html(lang="en-US")
             
             // START WRAPPER
             main.wrapper(role="main")
-                ul#cat
+                #cat
                 
             // START FOOTER
             footer
@@ -24,7 +24,12 @@ html(lang="en-US")
     script.
         var category = !{JSON.stringify(category)};
         (category || []).forEach(function(cat) {
-            var $li = $('<li>');
-            $li.text(cat);
-            $('#cat').append($li);
+            var $cat = $('<ul>');
+            $cat.text(cat.name);
+            (cat.idNotes || []).forEach(function(note) {
+                var $note = $('<li>');
+                $note.text(note.title);
+                $cat.append($note);
+            });
+            $('#cat').append($cat);
         });
