@@ -13,6 +13,7 @@ const dbTag = require('../model/tag.js');
 module.exports = {
     // get pages
     getHome: getHomeFunc,
+    getCategoryPage: getCategoryPageFunc,
 
     // post functions
     getNotes: getNotesFunc,
@@ -176,9 +177,31 @@ function getHomeFunc(req, res, next) {
         if (err) {
             return next(err);
         }
-        return res.render('handbook', {
+        return res.render('/handbook', {
             title: "Homepage",
             notes: result || []
+        });
+    });
+}
+
+function getCategoryPageFunc(req, res) {
+    // process
+    async.waterfall([
+        function (cb) {
+            getNoteCategories('', function(err, categories) {
+                if (err) {
+                    return cb(err);
+                }
+                cb(null, categories);
+            });
+        }
+    ], function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        return res.render('/category', {
+            title: "Category",
+            category: result || []
         });
     });
 }
@@ -186,7 +209,8 @@ function getHomeFunc(req, res, next) {
 function getUserNotes(params, mainCb) {
     var query = params.query || {};
     var population = [
-        {path: "tags"}
+        {path: "tags"},
+        {path: "category"}
     ];
     var selection = {id:1,title:1,category:1,introduction:1};
     
@@ -227,6 +251,16 @@ function saveNoteFunc(req, res) {
                 checkAndUpdateNoteTags(noteObj, cb);
             }
         },
+        
+//        // check note Category, 
+//        function(cb) {
+//            if (!noteObj.category || !Array.isArray(noteObj.category) || !noteObj.category.length) {
+//                cb(null);
+//            }
+//            else {
+//                checkAndUpdateNoteCategory(noteObj, cb);
+//            }
+//        },
         
         // create/update note
         function(cb) {
