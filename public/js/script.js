@@ -174,8 +174,8 @@ jQuery(function($){
                 $("html, body").animate({
                     scrollTop: $(noteForm).offset().top 
                 });
-            } else if( $(target).hasClass("list-item") ) {
-                triggerDetail(target);
+            } else if( $(target).is(".list-item a") ) {
+                triggerDetail(e);
             }
         });
         $(singleList).on('click', function(e) {
@@ -285,7 +285,8 @@ jQuery(function($){
         itembtns = $("<div></div>").addClass(btnsClass).append(itemDelete, itemEdit);
         
         /* =========== List Item ============ */
-        listItem = $("<li></li>").attr("id", itemId).addClass(itemClass).append(itemTop, itemBottom, itembtns);
+        listAnchor = $("<a href=\"#"+itemId+"\"></a>").append(itemTop, itemBottom, itembtns);
+        listItem = $("<li></li>").attr("id", itemId).addClass(itemClass).append(listAnchor);
         
         if( $("#"+itemId).length > 0 ) {
             $("#"+itemId).replaceWith(listItem);
@@ -304,10 +305,11 @@ jQuery(function($){
         var idNote = $(target).attr("id").slice(4);
     }
     
-    function triggerDetail(target) {
+    function triggerDetail(e) {
+        //e.preventDefault();
+        var target = e.target;
         var title, category, introduction, syntax, description;
-        var targetID = $(target).attr("id").slice(4);
-
+        var targetID = window.location.hash.slice(5);
         var index = notes.findIndex(function(element) {
             return element.id && element.id.toString() === targetID;
         });

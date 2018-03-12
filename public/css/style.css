@@ -120,6 +120,8 @@ button, input[type=submit], .btn { text-transform: uppercase; letter-spacing: 0.
 
 #notes-module .notes-wrapper { max-width: 700px; margin: 0 auto; }
 
+#notes-module .notes-header { display: none; }
+
 #notes-module .notes-header .btn svg { margin-right: 5px; }
 
 #notes-module .notes-header .btn + .btn { margin-left: 5px; }
@@ -135,6 +137,8 @@ button, input[type=submit], .btn { text-transform: uppercase; letter-spacing: 0.
 #notes-module .notes-body #note-list:not(:empty) { padding: 50px 0; }
 
 #notes-module .notes-body #note-list .list-item { position: relative; overflow: hidden; cursor: pointer; }
+
+#notes-module .notes-body #note-list .list-item a { color: #000; }
 
 #notes-module .notes-body #note-list .list-item .item-top { pointer-events: none; }
 

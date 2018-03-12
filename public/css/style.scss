@@ -93,6 +93,7 @@ button, input[type=submit], .btn {
         margin: 0 auto;
     }
     .notes-header {
+        display: none;
         .btn {
             svg {
                 margin-right: 5px;
@@ -121,6 +122,9 @@ button, input[type=submit], .btn {
                 position: relative;
                 overflow: hidden;
                 cursor: pointer;
+                a {
+                    color: #000;
+                }
                 .item-top {
                     pointer-events: none;
                     .item-header {
