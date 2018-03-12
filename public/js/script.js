@@ -9,7 +9,11 @@
 */
 /* ============================================================== */
 // GLOBAL VARIABLES
-var noteEditBtn, noteDoneBtn, formEl, noteList, addBtn, manageBtn, doneBtn, noteForm, syntaxEditor, descriptionEditor, formTitle, formCategory, formIntroduction, formSyntax, formDescription, formNoteID;
+// VISUAL VARIABLE
+var addBtn, manageBtn, doneBtn, syntaxEditor, descriptionEditor;
+// NOTE ITEM VARIABLE
+var noteList, singleList, singleBack;
+var noteForm, formEl, formTitle, formCategory, formIntroduction, formSyntax, formDescription, formNoteID;
 
 // CALL MAIN JQUERY FUNCTION
 jQuery(function($){
@@ -18,14 +22,19 @@ jQuery(function($){
     descriptionEditor = CKEDITOR.replace('add-description');
     
     // INITIAL ALL GLOBAL ELEMENT
-    noteForm = $("#note-form-container");
-    editBtn = $("#note-edit-btn");
+    // INITIAL VISUAL ELEMENT
     doneBtn = $("#note-done-btn");
     addBtn = $("#note-add-btn");
     manageBtn = $("#note-manage-btn");
+    
+    // INITIAL MAIN NOTE ELEMENT
+    noteList = $("#note-list");
+    singleList = $("#single-note");
+    singleBack = $("#single-back");
+
+    // INITIAL FORM ELEMENT
+    noteForm = $("#note-form-container");
     formEl = $("#note-form");
-    noteList = $("#noteList");
-    doneBtn = $("#note-done-btn");
     formSubmitBtn = $("#form-submit");
     
     // DISPLAY ALL NOTES WHILE LOADING
@@ -65,7 +74,6 @@ jQuery(function($){
             $(manageBtn).hide();
         },
         toggleBtn: function() {
-            noteList = $("#noteList");
             if( $(noteList).is(":empty") ) {
                 $(manageBtn).hide();
             } else {
@@ -84,6 +92,30 @@ jQuery(function($){
         }
     }
     
+    // TOGGLE FOR DONE BUTTON
+    var noteListToggle = {
+        showList: function() {
+            $(noteList).fadeIn(300);
+        },
+        hideList: function() {
+            $(noteList).fadeOut(300);
+        },
+        toggleList: function() {
+            $(noteList).fadeToggle(300);
+        }
+    }
+    // TOGGLE FOR DONE BUTTON
+    var singleListToggle = {
+        showList: function() {
+            $(singleList).fadeIn(300);
+        },
+        hideList: function() {
+            $(singleList).fadeOut(300);
+        },
+        toggleList: function() {
+            $(singleList).fadeToggle(300);
+        }
+    }
 /* ============================================================== */
 /*    MAIN NOTE LIST */
 /* ============================================================== */ 
@@ -143,7 +175,14 @@ jQuery(function($){
                     scrollTop: $(noteForm).offset().top 
                 });
             } else if( $(target).hasClass("list-item") ) {
-                //requestDetail(target);
+                triggerDetail(target);
+            }
+        });
+        $(singleList).on('click', function(e) {
+            var target = e.target;
+            if( $(target).hasClass("single-back") ) {
+                noteListToggle.toggleList();
+                singleListToggle.toggleList();
             }
         });
     }
@@ -265,6 +304,25 @@ jQuery(function($){
         var idNote = $(target).attr("id").slice(4);
     }
     
+    function triggerDetail(target) {
+        var title, category, introduction, syntax, description;
+        var targetID = $(target).attr("id").slice(4);
+
+        var index = notes.findIndex(function(element) {
+            return element.id && element.id.toString() === targetID;
+        });
+
+        if(index > -1) {
+            title = notes[index].title;
+            category = notes[index].category;
+            introduction = notes[index].introduction;
+            syntax = notes[index].syntax;
+            description = notes[index].description;
+            console.log(title);
+            noteListToggle.hideList();
+            singleListToggle.showList();
+        }
+    }
 /* ============================================================== */
 /* FORM METHODS */   
 /* ============================================================== */
