@@ -155,7 +155,9 @@ function getCategoryPageFunc(req, res, next) {
     async.waterfall([
         function (cb) {
             var population = [
-                {path: 'idNotes'}
+                {path: 'idNotes', populate: [
+                    {path: "tags"}
+                ]}
             ];
             dbCategory.find({}).populate(population).exec(function(err, categories) {
                 if (err) {
