@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
+        <title>JavaScript Handbook</title>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script type="text/javascript" src="js/jquery.js"></script>
+    </head>
+    <body>
+    <!-- START SITE -->
+    <div class="site" id="app">
+        <!-- START HEADER -->
+        <header id="header" v-bind:class="{ open: showMainMenu }">
+            <nav>
+                <span id="menu-toggle" v-on:click="showMainMenu = !showMainMenu">
+                    <span></span>
+                </span>
+                <main-menu></main-menu>
+            </nav>
+        </header>
+        <!-- END HEADER -->
+        <!-- START WRAPPER -->
+        <main role="main" class="wrapper">
+            <section id="user-module">
+                <div class="wrap">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <!-- END WRAPPER -->
+        <!-- START FOOTER -->
+        <footer></footer>
+        <!-- END FOOTER -->
+    </div>
+    <!-- END SITE -->
+    <script type="text/javascript" defer src="js/fontawesome-all.min.js"></script>
+    <script type="text/javascript" src="js/plugins.js"></script>
+</body>
+
+</html>

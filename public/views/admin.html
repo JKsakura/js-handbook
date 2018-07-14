@@ -4,10 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1">
         <title>JavaScript Handbook</title>
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="css/atom-one-light.css">
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
     </head>
     <body>
         <!-- START SITE -->
@@ -32,24 +33,37 @@
             <!-- END HEADER -->
             <!-- START WRAPPER -->
             <main role="main" class="wrapper">
-                <section id="notes-module">
-                    <div class="note-list-container main-content page active" data-page="1">
+                <section id="notes-module" class="main-content">
+                    <div class="note-list-container page active" data-page="1">
                         <div class="wrap">
                             <div class="notes-header">
                                 <button class="add-btn btn-sm btn-primary" id="note-add-btn"><i class="fas fa-plus-circle"></i>Add</button>
                                 <div class="search-box form-group">
-                                    <input type="search" class="form-control filter-search" aria-describedby="searchHelp" placeholder="Search..." name="search">
+                                    <input type="search" class="form-control" id="filter-search" aria-describedby="searchHelp" placeholder="Search..." name="search">
                                     <button type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </div>
                                 <div class="select-menu form-group">
-                                    <select id="filter-category" class="form-control filter-category"></select>
+                                    <select class="form-control" id="filter-category"></select>
                                 </div>
                             </div>
                             <div class="notes-body">
-                                <ul id="categories-list" class="list-group"></ul>
-                                <ul id="search-result"></ul>
+                                <table id="note-table" class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col" data-sort="id" class="sort">id</th>
+                                            <th scope="col" data-sort="title" class="sort">title</th>
+                                            <th scope="col" data-sort="date" class="sort">date</th>
+                                            <th scope="col">category</th>
+                                            <th scope="col">subcategory</th>
+                                            <th scope="col">introduction</th>
+                                            <th width="25"></th>
+                                            <th width="25"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
                                 <div class="no-result">
                                     <h3>Sorry, there's no result!</h3>
                                 </div>
@@ -68,8 +82,22 @@
                                 </div>
                                 <div class="form-field">
                                     <select id="form-category" class="form-control" required>
-                                        <option value="" selected disabled>Select Parent</option>
+                                        <option value="" selected disabled>Select Category</option>
                                     </select>
+                                </div>
+                                <div class="form-field">
+                                    <select id="form-subcategory" class="form-control" required>
+                                        <option value="" selected disabled>Select Subcategory</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <textarea class="form-control" name="introduction" placeholder="Introduction" id="form-introduction"></textarea>
+                                </div>
+                                <div class="form-field">
+                                    <textarea class="form-control syntax-editor" name="syntax" placeholder="Syntax" id="form-syntax"></textarea>
+                                </div>
+                                <div class="form-field">
+                                    <textarea class="form-control description-editor" name="description" placeholder="Description" id="form-description"></textarea>
                                 </div>
                                 <div class="form-field">
                                     <button id="form-submit" type="submit" value="Add Note" class="btn btn-success">Add Note</button>
@@ -79,8 +107,8 @@
                         </div>
                     </div>
                 </section>
-            </main
-            ><!-- END WRAPPER -->
+            </main>
+            <!-- END WRAPPER -->
             <!-- START FOOTER -->
             <footer></footer>
             <!-- END FOOTER -->
@@ -89,6 +117,6 @@
     <script type="text/javascript" defer src="js/fontawesome-all.min.js"></script>
     <script type="text/javascript" src="js/plugins.js"></script>
     <script tpype="text/javascript" src="js/utilities.js"></script>
-    <script type="text/javascript" src="js/category.js"></script>
+    <script type="text/javascript" src="js/admin.js"></script>
     </body>
 </html>

@@ -36,7 +36,6 @@
                     <div class="note-list-container main-content page active" data-page="1">
                         <div class="wrap">
                             <div class="notes-header">
-                                <button class="add-btn btn-sm btn-primary" id="note-add-btn"><i class="fas fa-plus-circle"></i>Add</button>
                                 <div class="search-box form-group">
                                     <input type="search" class="form-control filter-search" aria-describedby="searchHelp" placeholder="Search..." name="search">
                                     <button type="submit">
@@ -56,26 +55,27 @@
                             </div>
                         </div>
                     </div>
-                    <div class="note-form-container page" data-page="2">
+                    <div class="note-list-container main-content page" data-page="2">
                         <div class="wrap">
-                            <div class="notes-header">
-                                <button class="cancel-btn btn-sm btn-light" id="note-cancel-btn"><i class="fas fa-times-circle"></i>Cancel</button>
-                            </div>
                             <div class="notes-body">
-                            <form id="note-form">
-                                <div class="form-field">
-                                    <input type="text" class="form-control" placeholder="Title" id="form-title" required>
-                                </div>
-                                <div class="form-field">
-                                    <select id="form-category" class="form-control" required>
-                                        <option value="" selected disabled>Select Parent</option>
-                                    </select>
-                                </div>
-                                <div class="form-field">
-                                    <button id="form-submit" type="submit" value="Add Note" class="btn btn-success">Add Note</button>
-                                </div>
-                            </form>
+                                <a href="#note-list" class="back-to-all">Back</a>
+                                <ul id="notes-list" class="list-group">
+                                </ul>
+                            </div>
                         </div>
+                    </div>
+                    <div class="note-detail-container main-content page" data-page="3">
+                        <div class="wrap">
+                            <div id="note-detail" class="content-main">
+                                <a href="#note-list" class="back-to-all">Back</a>
+                                <div class="detail-header">
+                                    <h1 class="h1 detail-title"></h1>
+                                    <h5 class="h5 detail-category"></h5>
+                                </div>
+                                <p class="detail-introduction"></p>
+                                <code class="detail-syntax javascript"></code>
+                                <div class="detail-description"></div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -89,6 +89,6 @@
     <script type="text/javascript" defer src="js/fontawesome-all.min.js"></script>
     <script type="text/javascript" src="js/plugins.js"></script>
     <script tpype="text/javascript" src="js/utilities.js"></script>
-    <script type="text/javascript" src="js/category.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
     </body>
 </html>
